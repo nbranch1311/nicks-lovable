@@ -13,51 +13,55 @@ const Logo = ({ className = "" }: LogoProps) => {
       whileTap={{ scale: 0.95 }}
     >
       <svg
-        width="56"
+        width="44"
         height="32"
-        viewBox="0 0 56 32"
+        viewBox="0 0 44 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className="overflow-visible"
       >
-        {/* N letter - elegant serif style */}
-        <motion.path
-          d="M4 28V4L16 28V4"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        />
-        {/* Connecting line from N to b */}
+        {/* N left vertical stroke */}
         <motion.line
-          x1="16"
-          y1="16"
-          x2="24"
-          y2="16"
+          x1="4"
+          y1="4"
+          x2="4"
+          y2="28"
           stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 0.3, delay: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         />
-        {/* Lowercase b - stem */}
-        <motion.path
-          d="M24 4V28"
+        {/* N diagonal stroke */}
+        <motion.line
+          x1="4"
+          y1="4"
+          x2="20"
+          y2="28"
           stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
-          fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 0.4, delay: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
         />
-        {/* Lowercase b - bowl */}
+        {/* Shared vertical stroke (N right + b stem) */}
+        <motion.line
+          x1="20"
+          y1="4"
+          x2="20"
+          y2="28"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
+        />
+        {/* Lowercase b bowl */}
         <motion.path
-          d="M24 16C24 16 24 11 32 11C40 11 40 16 40 19C40 22 40 27 32 27C24 27 24 22 24 22"
+          d="M20 14C20 14 20 10 28 10C36 10 36 14 36 17C36 20 36 26 28 26C20 26 20 22 20 22"
           stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
@@ -65,7 +69,46 @@ const Logo = ({ className = "" }: LogoProps) => {
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }}
+          transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
+        />
+        {/* Serif accents - top left of N */}
+        <motion.line
+          x1="2"
+          y1="4"
+          x2="6"
+          y2="4"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 1.2 }}
+        />
+        {/* Serif accents - bottom left of N */}
+        <motion.line
+          x1="2"
+          y1="28"
+          x2="6"
+          y2="28"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 1.3 }}
+        />
+        {/* Serif accents - top of shared stem */}
+        <motion.line
+          x1="18"
+          y1="4"
+          x2="22"
+          y2="4"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 1.4 }}
         />
       </svg>
     </motion.a>
