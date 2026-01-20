@@ -59,9 +59,9 @@ const Logo = ({ className = "" }: LogoProps) => {
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
         />
-        {/* Lowercase b bowl - smaller and bottom-aligned */}
+        {/* Lowercase b bowl - slightly larger */}
         <motion.path
-          d="M20 18C20 18 20 15 26 15C32 15 32 18 32 21C32 24 32 28 26 28C20 28 20 25 20 25"
+          d="M20 17C20 17 20 14 27 14C34 14 34 17 34 21C34 25 34 28 27 28C20 28 20 24 20 24"
           stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
@@ -71,41 +71,35 @@ const Logo = ({ className = "" }: LogoProps) => {
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
         />
-        {/* Serif accents - top left of N */}
-        <motion.line
-          x1="2"
-          y1="4"
-          x2="6"
-          y2="4"
+        {/* Smooth serif - top left of N */}
+        <motion.path
+          d="M1 5C1 4.5 1.5 4 2 4L6 4C6.5 4 7 4.5 7 5"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeLinecap="round"
+          fill="none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 1.2 }}
         />
-        {/* Serif accents - bottom left of N */}
-        <motion.line
-          x1="2"
-          y1="28"
-          x2="6"
-          y2="28"
+        {/* Smooth serif - bottom left of N */}
+        <motion.path
+          d="M1 27C1 27.5 1.5 28 2 28L6 28C6.5 28 7 27.5 7 27"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeLinecap="round"
+          fill="none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 1.3 }}
         />
-        {/* Serif accents - top of shared stem */}
-        <motion.line
-          x1="18"
-          y1="4"
-          x2="22"
-          y2="4"
+        {/* Smooth serif - top of shared stem */}
+        <motion.path
+          d="M17 5C17 4.5 17.5 4 18 4L22 4C22.5 4 23 4.5 23 5"
           stroke="currentColor"
-          strokeWidth="2"
+          strokeWidth="1.5"
           strokeLinecap="round"
+          fill="none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 1.4 }}
