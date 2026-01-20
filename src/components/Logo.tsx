@@ -13,17 +13,17 @@ const Logo = ({ className = "" }: LogoProps) => {
       whileTap={{ scale: 0.95 }}
     >
       <svg
-        width="48"
-        height="40"
-        viewBox="0 0 48 40"
+        width="56"
+        height="32"
+        viewBox="0 0 56 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* N letter */}
+        {/* N letter - elegant serif style */}
         <motion.path
-          d="M4 36V4L14 36V4"
+          d="M4 28V4L16 28V4"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
@@ -33,12 +33,12 @@ const Logo = ({ className = "" }: LogoProps) => {
         />
         {/* Connecting line from N to b */}
         <motion.line
-          x1="14"
-          y1="20"
-          x2="22"
-          y2="20"
+          x1="16"
+          y1="16"
+          x2="24"
+          y2="16"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
@@ -46,9 +46,9 @@ const Logo = ({ className = "" }: LogoProps) => {
         />
         {/* Lowercase b - stem */}
         <motion.path
-          d="M22 4V36"
+          d="M24 4V28"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0 }}
@@ -57,9 +57,9 @@ const Logo = ({ className = "" }: LogoProps) => {
         />
         {/* Lowercase b - bowl */}
         <motion.path
-          d="M22 20C22 20 22 14 30 14C38 14 38 20 38 23C38 26 38 32 30 32C22 32 22 26 22 26"
+          d="M24 16C24 16 24 11 32 11C40 11 40 16 40 19C40 22 40 27 32 27C24 27 24 22 24 22"
           stroke="currentColor"
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
