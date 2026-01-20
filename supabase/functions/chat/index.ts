@@ -21,7 +21,7 @@ serve(async (req) => {
   try {
     const { messages } = await req.json() as { messages: Message[] };
     
-    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")?.trim();
     if (!ANTHROPIC_API_KEY) {
       throw new Error("ANTHROPIC_API_KEY is not configured");
     }
