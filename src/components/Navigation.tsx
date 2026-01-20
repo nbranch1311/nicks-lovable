@@ -33,7 +33,7 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* Logo - Try different variants: "geometric" | "stacked" | "connected" | "minimal" */}
-        <Logo variant="minimal" />
+        <Logo />
 
         {/* Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
