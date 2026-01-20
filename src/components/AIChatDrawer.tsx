@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -22,13 +24,6 @@ const suggestedQuestions = [
   "Why did you leave TechCorp?",
   "What would your last manager say about you?",
 ];
-
-const mockResponses: Record<string, string> = {
-  "What's your biggest weakness?": "I can be impatient with process when I see a clear technical solution. Early in my career, this meant I'd sometimes bulldoze through discussions to get to implementation. I've learned that alignment takes time, and skipping it creates more work later. Now I force myself to slow down and bring people along—even when my fingers are itching to write code.",
-  "Tell me about a project that failed": "At StartupXYZ, I led a rewrite of our billing system that we had to abandon 4 months in. I'd pushed for a complete rewrite when we should have done incremental improvements. The business couldn't wait, and we ended up patching the old system anyway. Expensive lesson in pragmatism over perfectionism.",
-  "Why did you leave TechCorp?": "I'd accomplished what I set out to do—the platform migration was complete, the team was strong, and the systems were stable. I found myself in more meetings than code. I missed building. I also wanted to try something earlier stage again.",
-  "What would your last manager say about you?": "She'd probably say I'm one of the strongest technical leads she's worked with, but that I could be better at celebrating wins. I tend to finish something and immediately move to the next problem. She pushed me to take more time to acknowledge the team's achievements.",
-};
 
 const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -68,20 +63,39 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
-    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
+    try {
+      // Build message history for context (excluding welcome message)
+      const messageHistory = [...messages, userMessage]
+        .filter(m => m.id !== "welcome")
+        .map(m => ({ role: m.role, content: m.content }));
 
-    const response = mockResponses[content.trim()] || 
-      "That's a great question. Based on my experience, I'd say the answer depends on context. Feel free to ask about specific projects, roles, or situations and I can give you more detailed insights.";
+      const { data, error } = await supabase.functions.invoke('chat', {
+        body: { messages: messageHistory }
+      });
 
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: response,
-    };
+      if (error) throw error;
 
-    setMessages((prev) => [...prev, assistantMessage]);
-    setIsTyping(false);
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.message || "I'm sorry, I couldn't generate a response.",
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      toast.error("Failed to get response. Please try again.");
+      
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
