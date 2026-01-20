@@ -3,15 +3,23 @@ import { Search, AlertTriangle, CheckCircle, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-type Verdict = "strong" | "weak" | "conversation" | null;
+type Verdict = "strong_fit" | "worth_conversation" | "probably_not" | null;
+
+interface Gap {
+  requirement: string;
+  gap_title: string;
+  explanation: string;
+}
 
 interface AnalysisResult {
   verdict: Verdict;
-  verdictLabel: string;
-  openingParagraph: string;
-  gaps: string[];
-  transfers: string[];
+  headline: string;
+  opening: string;
+  gaps: Gap[];
+  transfers: string;
   recommendation: string;
 }
 
@@ -41,71 +49,6 @@ Requirements:
 - Deep expertise in PyTorch and TensorFlow
 - Experience with reinforcement learning and NLP`;
 
-const mockAnalyze = (jd: string): AnalysisResult => {
-  const isStrongFit = jd.toLowerCase().includes("microservices") || 
-                      jd.toLowerCase().includes("typescript") ||
-                      jd.toLowerCase().includes("platform");
-  
-  const isWeakFit = jd.toLowerCase().includes("machine learning") || 
-                    jd.toLowerCase().includes("phd") ||
-                    jd.toLowerCase().includes("research");
-
-  if (isWeakFit) {
-    return {
-      verdict: "weak",
-      verdictLabel: "Probably Not Your Person",
-      openingParagraph: "I need to be honest with you: this role requires deep ML research expertise that I don't have. While I've built systems that use ML models, I'm not the person who designs novel architectures or publishes papers. Hiring me for this would be like hiring a great driver to design an engine.",
-      gaps: [
-        "No PhD or formal ML research background",
-        "Haven't published academic papers",
-        "Limited experience with deep learning frameworks",
-        "No reinforcement learning expertise",
-      ],
-      transfers: [
-        "Experience building production ML pipelines (as a consumer, not creator)",
-        "Strong systems engineering that could support ML infrastructure",
-        "Track record of learning new domains quickly",
-      ],
-      recommendation: "Look for someone with actual research credentials. If you need someone to build the platform that your ML models run on, that's a different conversation—and one where I'd be a strong fit.",
-    };
-  }
-
-  if (isStrongFit) {
-    return {
-      verdict: "strong",
-      verdictLabel: "Strong Fit",
-      openingParagraph: "This looks like exactly the kind of work I've been doing and want to keep doing. Platform modernization, technical leadership, mentoring—I've done this at scale and have the battle scars and wins to prove it.",
-      gaps: [
-        "May need ramp-up time on your specific tech stack",
-        "Haven't worked in your exact industry before",
-      ],
-      transfers: [
-        "Led a nearly identical microservices migration at TechCorp",
-        "Built real-time pipelines processing millions of events",
-        "Established engineering practices at multiple companies",
-        "Mentored 8+ engineers with strong promotion track record",
-      ],
-      recommendation: "Let's talk. I can share specific examples of how I've tackled similar challenges and we can explore whether the culture and technical direction align.",
-    };
-  }
-
-  return {
-    verdict: "conversation",
-    verdictLabel: "Worth a Conversation",
-    openingParagraph: "There's meaningful overlap here, but also some areas where we'd need to dig deeper. I don't want to oversell myself—let me be specific about where I'd add value and where there might be gaps.",
-    gaps: [
-      "Some requirements may need ramp-up time",
-      "Domain expertise would need to be built",
-    ],
-    transfers: [
-      "Core technical skills are well-aligned",
-      "Leadership and mentorship experience transfers directly",
-      "Problem-solving approach matches the role's challenges",
-    ],
-    recommendation: "This could be a great fit or a stretch—it depends on factors we'd need to discuss. I'd suggest a technical conversation to explore the specific challenges you're facing.",
-  };
-};
-
 const JDAnalyzer = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -115,11 +58,32 @@ const JDAnalyzer = () => {
     if (!jobDescription.trim()) return;
     
     setIsAnalyzing(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    const result = mockAnalyze(jobDescription);
-    setAnalysis(result);
-    setIsAnalyzing(false);
+    setAnalysis(null);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-jd", {
+        body: { jobDescription }
+      });
+
+      if (error) {
+        console.error("Analysis error:", error);
+        toast.error("Failed to analyze job description. Please try again.");
+        return;
+      }
+
+      if (data.error) {
+        console.error("Analysis error:", data.error);
+        toast.error(data.error);
+        return;
+      }
+
+      setAnalysis(data as AnalysisResult);
+    } catch (err) {
+      console.error("Analysis error:", err);
+      toast.error("Failed to analyze job description. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const loadExample = (type: "strong" | "weak") => {
@@ -129,14 +93,40 @@ const JDAnalyzer = () => {
 
   const getVerdictStyles = (verdict: Verdict) => {
     switch (verdict) {
-      case "strong":
+      case "strong_fit":
         return "bg-primary/20 text-primary border-primary/30";
-      case "weak":
+      case "probably_not":
         return "bg-secondary/20 text-secondary border-secondary/30";
-      case "conversation":
+      case "worth_conversation":
         return "bg-muted text-foreground border-border";
       default:
         return "";
+    }
+  };
+
+  const getVerdictLabel = (verdict: Verdict) => {
+    switch (verdict) {
+      case "strong_fit":
+        return "Strong Fit";
+      case "probably_not":
+        return "Probably Not Your Person";
+      case "worth_conversation":
+        return "Worth a Conversation";
+      default:
+        return "";
+    }
+  };
+
+  const getVerdictIcon = (verdict: Verdict) => {
+    switch (verdict) {
+      case "strong_fit":
+        return <CheckCircle className="w-4 h-4" />;
+      case "probably_not":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "worth_conversation":
+        return <MessageSquare className="w-4 h-4" />;
+      default:
+        return null;
     }
   };
 
@@ -222,54 +212,65 @@ const JDAnalyzer = () => {
               exit={{ opacity: 0, y: -20 }}
               className="glass rounded-xl p-6 space-y-6"
             >
-              {/* Verdict Badge */}
-              <div className="flex items-center gap-3">
-                <span
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${getVerdictStyles(
-                    analysis.verdict
-                  )}`}
-                >
-                  {analysis.verdict === "strong" && <CheckCircle className="w-4 h-4" />}
-                  {analysis.verdict === "weak" && <AlertTriangle className="w-4 h-4" />}
-                  {analysis.verdict === "conversation" && <MessageSquare className="w-4 h-4" />}
-                  {analysis.verdictLabel}
-                </span>
+              {/* Verdict Badge & Headline */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${getVerdictStyles(
+                      analysis.verdict
+                    )}`}
+                  >
+                    {getVerdictIcon(analysis.verdict)}
+                    {getVerdictLabel(analysis.verdict)}
+                  </span>
+                </div>
+                {analysis.headline && (
+                  <h3 className="text-xl font-semibold text-foreground">
+                    {analysis.headline}
+                  </h3>
+                )}
               </div>
 
               {/* Opening Paragraph */}
               <p className="text-foreground text-lg leading-relaxed">
-                {analysis.openingParagraph}
+                {analysis.opening}
               </p>
 
               {/* Gaps Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">
-                  Where I Don't Fit
-                </h3>
-                <ul className="space-y-2">
-                  {analysis.gaps.map((gap, index) => (
-                    <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                      <span className="text-secondary mt-0.5">✗</span>
-                      {gap}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {analysis.gaps && analysis.gaps.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">
+                    Where I Don't Fit
+                  </h3>
+                  <ul className="space-y-3">
+                    {analysis.gaps.map((gap, index) => (
+                      <li key={index} className="text-muted-foreground">
+                        <div className="flex items-start gap-2">
+                          <span className="text-secondary mt-0.5 shrink-0">✗</span>
+                          <div>
+                            <span className="font-medium text-foreground">{gap.gap_title}</span>
+                            <span className="text-muted-foreground"> — {gap.requirement}</span>
+                            <p className="text-sm mt-1 text-muted-foreground/80">{gap.explanation}</p>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Transfers Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
-                  What Transfers
-                </h3>
-                <ul className="space-y-2">
-                  {analysis.transfers.map((transfer, index) => (
-                    <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                      <span className="text-primary mt-0.5">✓</span>
-                      {transfer}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {analysis.transfers && (
+                <div>
+                  <h3 className="text-sm font-semibold text-primary uppercase tracking-wider mb-3">
+                    What Transfers
+                  </h3>
+                  <p className="text-muted-foreground flex items-start gap-2">
+                    <span className="text-primary mt-0.5 shrink-0">✓</span>
+                    {analysis.transfers}
+                  </p>
+                </div>
+              )}
 
               {/* Recommendation */}
               <div className="pt-4 border-t border-border/50">

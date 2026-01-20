@@ -7,3 +7,6 @@ max_rows = 1000
 
 [functions.chat]
 verify_jwt = false
+
+[functions.analyze-jd]
+verify_jwt = false
