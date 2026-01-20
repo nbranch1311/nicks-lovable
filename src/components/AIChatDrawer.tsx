@@ -21,7 +21,7 @@ interface AIChatDrawerProps {
 const suggestedQuestions = [
   "What's your biggest weakness?",
   "Tell me about a project that failed",
-  "Why did you leave TechCorp?",
+  "Why did you leave The Washington Post?",
   "What would your last manager say about you?",
 ];
 
@@ -78,7 +78,7 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.message || "I'm sorry, I couldn't generate a response.",
+        content: data.message || "I'm sorry, I couldn't generate a response. Bet Nick stopped paying the bill. Tokens ain't cheap yet.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -90,7 +90,7 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Sorry, I encountered an error. Please try again.",
+        content: "Something went wrong. Add this to things Nick will have to fix. Or feel free to try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {

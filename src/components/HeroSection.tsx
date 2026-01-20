@@ -45,7 +45,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground mb-4"
         >
-          Nick Builder
+          Nick Branch
         </motion.h1>
 
         {/* Title */}
@@ -55,7 +55,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-2xl md:text-3xl text-primary font-medium mb-6"
         >
-          Staff Software Engineer
+          Principal Software Engineer
         </motion.p>
 
         {/* Positioning Statement */}

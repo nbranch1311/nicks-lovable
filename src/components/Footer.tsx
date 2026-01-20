@@ -13,9 +13,9 @@ const Footer = () => {
           className="text-center"
         >
           <h3 className="text-2xl font-serif font-bold text-foreground mb-2">
-            Nick Builder
+            Nick Branch
           </h3>
-          <p className="text-muted-foreground mb-6">Staff Software Engineer</p>
+          <p className="text-muted-foreground mb-6">Principal Software Engineer</p>
 
           {/* Social Links */}
           <div className="flex justify-center gap-4 mb-8">
@@ -51,7 +51,7 @@ const Footer = () => {
 
           <div className="mt-8 pt-8 border-t border-border/30">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} Nick Builder. All rights reserved.
+              © {new Date().getFullYear()} Nick Branch. All rights reserved.
             </p>
           </div>
         </motion.div>
