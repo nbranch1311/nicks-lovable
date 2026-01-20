@@ -59,9 +59,9 @@ const Logo = ({ className = "" }: LogoProps) => {
           animate={{ pathLength: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
         />
-        {/* Lowercase b bowl */}
+        {/* Lowercase b bowl - smaller and bottom-aligned */}
         <motion.path
-          d="M20 14C20 14 20 10 28 10C36 10 36 14 36 17C36 20 36 26 28 26C20 26 20 22 20 22"
+          d="M20 18C20 18 20 15 26 15C32 15 32 18 32 21C32 24 32 28 26 28C20 28 20 25 20 25"
           stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
