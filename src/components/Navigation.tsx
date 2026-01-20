@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import Logo from "./Logo";
 
 interface NavigationProps {
   onOpenChat: () => void;
@@ -31,13 +32,8 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
       }`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        {/* Logo/Initials */}
-        <a 
-          href="#" 
-          className="text-2xl font-serif font-bold text-foreground hover:text-primary transition-colors"
-        >
-          NB
-        </a>
+        {/* Logo - Try different variants: "geometric" | "stacked" | "connected" | "minimal" */}
+        <Logo variant="minimal" />
 
         {/* Navigation Links */}
         <div className="hidden md:flex items-center gap-8">
