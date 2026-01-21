@@ -21,9 +21,19 @@ export const useAssetDownload = () => {
     setError(null);
 
     try {
+      // IMPORTANT: trigger the download synchronously on the user gesture.
+      // If we await first, Chrome may treat it as a popup and block it.
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = fileName || assetKey;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       const visitorId = getCurrentVisitorId();
 
-      // Increment the download counter
+      // Increment the download counter (safe to await after the download is triggered)
       const { data, error: rpcError } = await supabase.rpc("increment_download", {
         p_asset_key: assetKey,
         p_visitor_id: visitorId,
@@ -33,15 +43,6 @@ export const useAssetDownload = () => {
         console.error("Error incrementing download:", rpcError);
         setError(rpcError.message);
       }
-
-      // Trigger the file download
-      const link = document.createElement("a");
-      link.href = fileUrl;
-      link.download = fileName || assetKey;
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
 
       return data as number | null;
     } catch (err) {

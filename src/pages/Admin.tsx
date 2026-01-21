@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAdminData } from "@/hooks/useAdminData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Loader2, Save, ExternalLink, LogOut, User, Briefcase, Zap, AlertTriangle, Heart, HelpCircle, Bot } from "lucide-react";
+import { Loader2, Save, ExternalLink, LogOut, User, Briefcase, Zap, AlertTriangle, Heart, HelpCircle, Bot, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 import ProfileTab from "@/components/admin/ProfileTab";
 import ExperienceTab from "@/components/admin/ExperienceTab";
@@ -13,6 +13,7 @@ import GapsTab from "@/components/admin/GapsTab";
 import ValuesTab from "@/components/admin/ValuesTab";
 import FAQTab from "@/components/admin/FAQTab";
 import AIInstructionsTab from "@/components/admin/AIInstructionsTab";
+import AnalyticsTab from "@/components/admin/AnalyticsTab";
 
 const Admin = () => {
   const { signOut } = useAuth();
@@ -57,6 +58,7 @@ const Admin = () => {
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "experience", label: "Experience", icon: Briefcase },
     { id: "skills", label: "Skills", icon: Zap },
     { id: "gaps", label: "Gaps", icon: AlertTriangle },
@@ -116,6 +118,10 @@ const Admin = () => {
 
           <TabsContent value="profile" className="mt-6">
             <ProfileTab profile={profile} setProfile={setProfile} />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-6">
+            <AnalyticsTab />
           </TabsContent>
 
           <TabsContent value="experience" className="mt-6">
