@@ -27,9 +27,19 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Listen for password recovery event
+  // Check for recovery mode on mount and listen for auth changes
   useEffect(() => {
+    // Check URL hash for recovery token (Supabase puts tokens in hash)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+    
+    if (type === 'recovery') {
+      setIsRecoveryMode(true);
+    }
+
+    // Also listen for the PASSWORD_RECOVERY event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      console.log("Auth event:", event);
       if (event === "PASSWORD_RECOVERY") {
         setIsRecoveryMode(true);
       }
