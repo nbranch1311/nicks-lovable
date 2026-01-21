@@ -45,8 +45,8 @@ const Footer = () => {
 
           {/* Tagline */}
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Built with AI-queryable context. Because resumes are static, 
-            but careers have stories worth exploring.
+            Built with AI-queryable context. Because resumes are static and boring, 
+            but careers have exciting stories worth exploring. I am not a rapper.
           </p>
 
           <div className="mt-8 pt-8 border-t border-border/30">
