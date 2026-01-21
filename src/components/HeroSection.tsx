@@ -1,12 +1,14 @@
 import { MessageCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { usePublicProfile } from "@/hooks/usePublicData";
 
 interface HeroSectionProps {
   onOpenChat: () => void;
 }
 
-const companies = [
+// Fallback data when no database profile exists
+const fallbackCompanies = [
   "Google",
   "Meta",
   "Stripe",
@@ -15,6 +17,27 @@ const companies = [
 ];
 
 const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
+  const { data: profile, isLoading } = usePublicProfile();
+
+  // Use database data if available, otherwise fallback to defaults
+  const name = profile?.name || "Nick Branch";
+  const title = profile?.title || "Principal Software Engineer";
+  const elevatorPitch = profile?.elevator_pitch || 
+    "I build high-performance systems that scale. 12 years shipping products used by millions, from early-stage chaos to public company stability.";
+  const targetTitles = profile?.target_titles?.length ? profile.target_titles : ["Staff Engineer"];
+  const targetCompanyStages = profile?.target_company_stages?.length ? profile.target_company_stages : ["Series B+ Companies"];
+  const availabilityStatus = profile?.availability_status || "Open to opportunities";
+
+  // Format availability badge text
+  const getAvailabilityText = () => {
+    const statusMap: Record<string, string> = {
+      'actively_looking': 'Actively looking',
+      'open': 'Open to opportunities',
+      'not_looking': 'Not currently looking',
+    };
+    return statusMap[availabilityStatus] || availabilityStatus;
+  };
+
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12 relative">
       {/* Background gradient */}
@@ -33,8 +56,9 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
         >
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse-slow" />
           <span className="text-sm text-muted-foreground">
-            Open to <span className="text-foreground font-medium">Staff Engineer</span> at{" "}
-            <span className="text-foreground font-medium">Series B+ Companies</span>
+            {getAvailabilityText()} for{" "}
+            <span className="text-foreground font-medium">{targetTitles.join(", ")}</span> at{" "}
+            <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span>
           </span>
         </motion.div>
 
@@ -45,7 +69,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground mb-4"
         >
-          Nick Branch
+          {isLoading ? <span className="opacity-50">Loading...</span> : name}
         </motion.h1>
 
         {/* Title */}
@@ -55,7 +79,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-2xl md:text-3xl text-primary font-medium mb-6"
         >
-          Principal Software Engineer
+          {title}
         </motion.p>
 
         {/* Positioning Statement */}
@@ -65,18 +89,17 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
         >
-          I build high-performance systems that scale. 12 years shipping products 
-          used by millions, from early-stage chaos to public company stability.
+          {elevatorPitch}
         </motion.p>
 
-        {/* Company Badges */}
+        {/* Company Badges - Use fallback companies for now */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex flex-wrap justify-center gap-3 mb-10"
         >
-          {companies.map((company, index) => (
+          {fallbackCompanies.map((company) => (
             <span
               key={company}
               className="px-4 py-2 rounded-full glass text-sm text-muted-foreground hover:text-foreground transition-colors"
