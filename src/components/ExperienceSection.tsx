@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { Sparkles, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { usePublicExperiences, ExperiencePublic } from "@/hooks/usePublicData";
 import { format } from "date-fns";
+import ScrollDownCaret from "@/components/ScrollDownCaret";
 
 // Fallback data when no database experiences exist
 const fallbackExperiences = [
@@ -110,7 +108,7 @@ const ExperienceSection = () => {
     : fallbackExperiences;
 
   return (
-    <section id="experience" className="py-24 px-6">
+    <section id="experience" className="py-24 px-6 relative">
       <div className="container mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -137,6 +135,8 @@ const ExperienceSection = () => {
           )}
         </div>
       </div>
+
+      <ScrollDownCaret nextSectionId="skills" ariaLabel="Scroll to Skills" />
     </section>
   );
 };

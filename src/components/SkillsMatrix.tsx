@@ -1,6 +1,7 @@
 import { Check, Circle, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useGroupedPublicSkills, SkillPublic } from "@/hooks/usePublicData";
+import ScrollDownCaret from "@/components/ScrollDownCaret";
 
 // Fallback data when no database skills exist
 const fallbackSkillCategories = {
@@ -86,7 +87,7 @@ const SkillsMatrix = () => {
     : fallbackSkillCategories;
 
   return (
-    <section className="py-24 px-6 bg-card/30">
+    <section id="skills" className="py-24 px-6 bg-card/30 relative">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -161,6 +162,8 @@ const SkillsMatrix = () => {
           })}
         </div>
       </div>
+
+      <ScrollDownCaret nextSectionId="fit-check" ariaLabel="Scroll to Fit Check" />
     </section>
   );
 };
