@@ -1,7 +1,16 @@
 import { Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import { usePublicProfile } from "@/hooks/usePublicData";
 
 const Footer = () => {
+  const { data: profile } = usePublicProfile();
+
+  const name = profile?.name || "Nick Branch";
+  const title = profile?.title || "Principal Software Engineer";
+  const githubUrl = profile?.github_url || "";
+  const linkedinUrl = profile?.linkedin_url || "";
+  const email = profile?.email || "";
+
   return (
     <footer id="projects" className="py-16 px-6 border-t border-border/50">
       <div className="container mx-auto max-w-4xl">
@@ -13,34 +22,40 @@ const Footer = () => {
           className="text-center"
         >
           <h3 className="text-2xl font-serif font-bold text-foreground mb-2">
-            Nick Branch
+            {name}
           </h3>
-          <p className="text-muted-foreground mb-6">Principal Software Engineer</p>
+          <p className="text-muted-foreground mb-6">{title}</p>
 
           {/* Social Links */}
           <div className="flex justify-center gap-4 mb-8">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a
-              href="mailto:hello@example.com"
-              className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
-            >
-              <Mail className="w-5 h-5" />
-            </a>
+            {githubUrl && (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+            )}
+            {linkedinUrl && (
+              <a
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              >
+                <Mail className="w-5 h-5" />
+              </a>
+            )}
           </div>
 
           {/* Tagline */}

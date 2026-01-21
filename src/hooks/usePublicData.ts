@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface CandidateProfilePublic {
   id: string;
   name: string | null;
+  email: string | null;
   title: string | null;
   elevator_pitch: string | null;
   career_narrative: string | null;
@@ -60,7 +61,7 @@ export const usePublicProfile = () => {
       // Fallback to main table (for when views aren't created yet)
       const { data, error } = await supabase
         .from('candidate_profile')
-        .select('id, name, title, elevator_pitch, career_narrative, looking_for, location, remote_preference, linkedin_url, github_url, twitter_url, availability_status, target_titles, target_company_stages, resume_url')
+        .select('id, name, email, title, elevator_pitch, career_narrative, looking_for, location, remote_preference, linkedin_url, github_url, twitter_url, availability_status, target_titles, target_company_stages, resume_url')
         .limit(1)
         .maybeSingle();
       

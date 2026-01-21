@@ -131,7 +131,7 @@ const JDAnalyzer = () => {
   };
 
   return (
-    <section id="fit-check" className="py-24 px-6">
+    <section id="fit-check" className="py-24 px-6 relative">
       <div className="container mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

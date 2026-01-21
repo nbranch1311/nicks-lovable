@@ -1,7 +1,8 @@
-import { MessageCircle, ChevronDown } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { usePublicProfile } from "@/hooks/usePublicData";
+import ScrollDownCaret from "@/components/ScrollDownCaret";
 
 interface HeroSectionProps {
   onOpenChat: () => void;
@@ -39,7 +40,10 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12 relative">
+    <section
+      id="top"
+      className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12 relative"
+    >
       {/* Background gradient */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -126,19 +130,12 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ChevronDown className="w-6 h-6 text-muted-foreground" />
-        </motion.div>
+        <ScrollDownCaret nextSectionId="experience" ariaLabel="Scroll to Experience" />
       </motion.div>
     </section>
   );
