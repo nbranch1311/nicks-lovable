@@ -19,14 +19,14 @@ const ScrollDownCaret = ({ nextSectionId, ariaLabel }: ScrollDownCaretProps) => 
       type="button"
       onClick={handleClick}
       aria-label={ariaLabel ?? `Scroll to ${nextSectionId}`}
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+      className="absolute bottom-8 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-transparent border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-muted/20 transition-all"
     >
       <motion.div
-        animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
+        animate={reduceMotion ? undefined : { y: [0, 4, 0] }}
         transition={
           reduceMotion
             ? undefined
-            : { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+            : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
         }
       >
         <ChevronDown className="w-5 h-5" />
