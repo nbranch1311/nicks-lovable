@@ -11,6 +11,34 @@ export const useAssetDownload = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const triggerBrowserDownload = async (fileUrl: string, fileName: string) => {
+    // Prefer same-tab download (no new tab) and avoid popup blockers.
+    // Use a Blob URL so Chrome treats it as a first-party download.
+    try {
+      const res = await fetch(fileUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Failed to fetch file: ${res.status}`);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Cleanup
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10_000);
+      return;
+    } catch (e) {
+      // Fallback: attempt a normal same-tab navigation download.
+      // If a client-side blocker blocks the domain, this will still be blocked,
+      // but it avoids opening a new tab.
+      console.warn("Blob download failed; falling back to direct URL:", e);
+      window.location.assign(fileUrl);
+    }
+  };
+
   // Increment download counter and trigger file download
   const downloadAsset = useCallback(async (
     assetKey: string,
@@ -21,15 +49,7 @@ export const useAssetDownload = () => {
     setError(null);
 
     try {
-      // IMPORTANT: trigger the download synchronously on the user gesture.
-      // If we await first, Chrome may treat it as a popup and block it.
-      const link = document.createElement("a");
-      link.href = fileUrl;
-      link.download = fileName || assetKey;
-      link.target = "_blank";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      await triggerBrowserDownload(fileUrl, fileName || `${assetKey}.pdf`);
 
       const visitorId = getCurrentVisitorId();
 
