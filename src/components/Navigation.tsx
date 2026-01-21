@@ -41,12 +41,12 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
         scrolled ? "glass-strong py-3" : "bg-transparent py-6"
       }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
+      <div className="container mx-auto px-6 relative flex items-center justify-between">
         {/* Logo - Try different variants: "geometric" | "stacked" | "connected" | "minimal" */}
         <Logo />
 
         {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           <button
             onClick={() => scrollToSection("experience")}
             className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
