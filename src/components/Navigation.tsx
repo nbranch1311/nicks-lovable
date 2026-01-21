@@ -41,12 +41,12 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
         scrolled ? "glass-strong py-3" : "bg-transparent py-6"
       }`}
     >
-      <div className="container mx-auto px-6 relative flex items-center justify-between">
+      <div className="container mx-auto px-6 grid grid-cols-[auto,1fr,auto] items-center gap-4">
         {/* Logo - Try different variants: "geometric" | "stacked" | "connected" | "minimal" */}
         <Logo />
 
         {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+        <div className="hidden md:flex items-center justify-center gap-6">
           <button
             onClick={() => scrollToSection("experience")}
             className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
@@ -68,14 +68,14 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end gap-3">
           {/* Resume Download Button */}
           {profile?.resume_url && (
             <Button
               variant="outline"
               onClick={handleResumeDownload}
               disabled={downloadLoading}
-              className="hidden sm:flex"
+              className="hidden lg:flex"
             >
               <FileText className="w-4 h-4 mr-2" />
               Resume
