@@ -1,7 +1,9 @@
 import { Check, Circle, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { useGroupedPublicSkills, SkillPublic } from "@/hooks/usePublicData";
 
-const skillCategories = {
+// Fallback data when no database skills exist
+const fallbackSkillCategories = {
   strong: {
     icon: Check,
     title: "Strong",
@@ -45,7 +47,44 @@ const skillCategories = {
   },
 };
 
+interface SkillCategoryConfig {
+  icon: typeof Check | typeof Circle | typeof X;
+  title: string;
+  accent: string;
+  skills: string[];
+}
+
 const SkillsMatrix = () => {
+  const { data: groupedSkills, isLoading } = useGroupedPublicSkills();
+  
+  // Build skill categories from database or use fallback
+  const hasDbSkills = groupedSkills.strong.length > 0 || 
+                       groupedSkills.moderate.length > 0 || 
+                       groupedSkills.gap.length > 0;
+  
+  const skillCategories: Record<string, SkillCategoryConfig> = hasDbSkills
+    ? {
+        strong: {
+          icon: Check,
+          title: "Strong",
+          accent: "primary",
+          skills: groupedSkills.strong.map(s => s.skill_name),
+        },
+        moderate: {
+          icon: Circle,
+          title: "Moderate",
+          accent: "muted",
+          skills: groupedSkills.moderate.map(s => s.skill_name),
+        },
+        gaps: {
+          icon: X,
+          title: "Gaps",
+          accent: "secondary",
+          skills: groupedSkills.gap.map(s => s.skill_name),
+        },
+      }
+    : fallbackSkillCategories;
+
   return (
     <section className="py-24 px-6 bg-card/30">
       <div className="container mx-auto max-w-6xl">
@@ -69,6 +108,9 @@ const SkillsMatrix = () => {
             const Icon = category.icon;
             const isStrong = key === "strong";
             const isGaps = key === "gaps";
+
+            // Skip empty categories
+            if (category.skills.length === 0) return null;
 
             return (
               <motion.div
