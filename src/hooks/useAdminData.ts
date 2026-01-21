@@ -24,6 +24,7 @@ export interface Profile {
   linkedin_url: string | null;
   github_url: string | null;
   twitter_url: string | null;
+  resume_url: string | null;
 }
 
 export interface Experience {
@@ -119,6 +120,7 @@ const defaultProfile: Profile = {
   linkedin_url: null,
   github_url: null,
   twitter_url: null,
+  resume_url: null,
 };
 
 const defaultValuesCulture: ValuesCulture = {

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Logo from "./Logo";
+import { useAssetDownload } from "@/hooks/useAssetDownload";
+import { usePublicData } from "@/hooks/usePublicData";
 
 interface NavigationProps {
   onOpenChat: () => void;
@@ -10,6 +12,8 @@ interface NavigationProps {
 
 const Navigation = ({ onOpenChat }: NavigationProps) => {
   const [scrolled, setScrolled] = useState(false);
+  const { downloadAsset, loading: downloadLoading } = useAssetDownload();
+  const { profile } = usePublicData();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -20,6 +24,12 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleResumeDownload = async () => {
+    if (profile?.resume_url) {
+      await downloadAsset("resume", profile.resume_url, "resume.pdf");
+    }
   };
 
   return (
@@ -57,14 +67,30 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
           </button>
         </div>
 
-        {/* Ask AI Button */}
-        <Button
-          onClick={onOpenChat}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium glow-primary"
-        >
-          <MessageCircle className="w-4 h-4 mr-2" />
-          Ask AI
-        </Button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          {/* Resume Download Button */}
+          {profile?.resume_url && (
+            <Button
+              variant="outline"
+              onClick={handleResumeDownload}
+              disabled={downloadLoading}
+              className="hidden sm:flex"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Resume
+            </Button>
+          )}
+
+          {/* Ask AI Button */}
+          <Button
+            onClick={onOpenChat}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium glow-primary"
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            Ask AI
+          </Button>
+        </div>
       </div>
     </motion.nav>
   );
