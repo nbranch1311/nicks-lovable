@@ -55,7 +55,31 @@ export const usePublicProfile = () => {
         .maybeSingle();
       
       if (!viewError && viewData) {
-        return viewData as CandidateProfilePublic;
+        // Some deployments may have an older `candidate_profile_public` view that
+        // doesn't expose newer columns (like `email`). In that case, hydrate
+        // missing fields from the base table.
+        const maybeProfile = viewData as Partial<CandidateProfilePublic>;
+        const hasEmailField = Object.prototype.hasOwnProperty.call(viewData, 'email');
+
+        if (hasEmailField && maybeProfile.email) {
+          return viewData as CandidateProfilePublic;
+        }
+
+        // Fetch just the missing field(s) from the base table.
+        const emailQuery = supabase.from('candidate_profile').select('email').limit(1);
+        const { data: emailRow, error: emailError } = maybeProfile.id
+          ? await emailQuery.eq('id', maybeProfile.id as string).maybeSingle()
+          : await emailQuery.maybeSingle();
+
+        if (emailError) {
+          // Don't fail the whole profile if this hydration query fails.
+          return viewData as CandidateProfilePublic;
+        }
+
+        return {
+          ...(viewData as CandidateProfilePublic),
+          email: (emailRow?.email ?? null) as string | null,
+        };
       }
 
       // Fallback to main table (for when views aren't created yet)
