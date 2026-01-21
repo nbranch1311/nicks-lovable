@@ -13,6 +13,7 @@ import { CalendarIcon, X, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import ResumeUpload from "./ResumeUpload";
 
 interface ProfileTabProps {
   profile: Profile;
@@ -52,6 +53,12 @@ const ProfileTab = ({ profile, setProfile }: ProfileTabProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Resume Upload Section */}
+      <ResumeUpload
+        resumeUrl={profile.resume_url}
+        onResumeChange={(url) => updateProfile("resume_url", url)}
+      />
+
       <Card className="glass border-border/50">
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>

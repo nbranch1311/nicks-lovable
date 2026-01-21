@@ -17,6 +17,7 @@ export interface CandidateProfilePublic {
   availability_status: string | null;
   target_titles: string[] | null;
   target_company_stages: string[] | null;
+  resume_url: string | null;
 }
 
 export interface ExperiencePublic {
@@ -45,9 +46,21 @@ export const usePublicProfile = () => {
   return useQuery({
     queryKey: ['public-profile'],
     queryFn: async (): Promise<CandidateProfilePublic | null> => {
-      const { data, error } = await supabase
+      // Try public view first, fall back to main table
+      const { data: viewData, error: viewError } = await supabase
         .from('candidate_profile_public')
         .select('*')
+        .limit(1)
+        .maybeSingle();
+      
+      if (!viewError && viewData) {
+        return viewData as CandidateProfilePublic;
+      }
+
+      // Fallback to main table (for when views aren't created yet)
+      const { data, error } = await supabase
+        .from('candidate_profile')
+        .select('id, name, title, elevator_pitch, career_narrative, looking_for, location, remote_preference, linkedin_url, github_url, twitter_url, availability_status, target_titles, target_company_stages, resume_url')
         .limit(1)
         .maybeSingle();
       
@@ -59,6 +72,20 @@ export const usePublicProfile = () => {
     },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
+};
+
+// Combined hook for convenience
+export const usePublicData = () => {
+  const { data: profile, isLoading: profileLoading } = usePublicProfile();
+  const { data: experiences, isLoading: experiencesLoading } = usePublicExperiences();
+  const { data: grouped, isLoading: skillsLoading } = useGroupedPublicSkills();
+
+  return {
+    profile,
+    experiences,
+    skills: grouped,
+    loading: profileLoading || experiencesLoading || skillsLoading,
+  };
 };
 
 export const usePublicExperiences = () => {
