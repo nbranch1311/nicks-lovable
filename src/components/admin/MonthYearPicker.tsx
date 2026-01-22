@@ -116,6 +116,9 @@ const MonthYearPicker = ({
     }
   };
 
+  const startMonth = new Date(1990, 0);
+  const endMonth = new Date();
+
   return (
     <div className="relative flex">
       <Input
@@ -151,7 +154,10 @@ const MonthYearPicker = ({
               onSelect={handleMonthSelect}
               defaultMonth={selectedDate}
               disabled={(date) => date > new Date()}
-              initialFocus
+              captionLayout="dropdown"
+              startMonth={startMonth}
+              endMonth={endMonth}
+              autoFocus
             />
             {/* Quick actions */}
             <div className="flex gap-2 px-3 pb-3 border-t border-border">
