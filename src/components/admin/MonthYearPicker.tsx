@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { format, parse, isValid, startOfMonth } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -18,6 +17,11 @@ interface MonthYearPickerProps {
   placeholder?: string;
 }
 
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
+
 const MonthYearPicker = ({
   value,
   onChange,
@@ -26,8 +30,13 @@ const MonthYearPicker = ({
 }: MonthYearPickerProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [viewYear, setViewYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
 
   // Sync input value and selected date with prop
   useEffect(() => {
@@ -36,15 +45,19 @@ const MonthYearPicker = ({
         const date = new Date(value);
         if (isValid(date)) {
           setInputValue(format(date, "MMM yyyy"));
-          setSelectedDate(startOfMonth(date));
+          setSelectedMonth(date.getMonth());
+          setSelectedYear(date.getFullYear());
+          setViewYear(date.getFullYear());
         }
       } catch {
         setInputValue("");
-        setSelectedDate(undefined);
+        setSelectedMonth(null);
+        setSelectedYear(null);
       }
     } else {
       setInputValue("");
-      setSelectedDate(undefined);
+      setSelectedMonth(null);
+      setSelectedYear(null);
     }
   }, [value]);
 
@@ -52,13 +65,12 @@ const MonthYearPicker = ({
     const trimmed = input.trim();
     if (!trimmed) return null;
 
-    // Try various formats
     const formats = [
-      "MMM yyyy",   // Jan 2024
-      "MMMM yyyy",  // January 2024
-      "MM/yyyy",    // 01/2024
-      "M/yyyy",     // 1/2024
-      "yyyy-MM",    // 2024-01
+      "MMM yyyy",
+      "MMMM yyyy",
+      "MM/yyyy",
+      "M/yyyy",
+      "yyyy-MM",
     ];
 
     for (const fmt of formats) {
@@ -81,13 +93,11 @@ const MonthYearPicker = ({
   const handleInputBlur = () => {
     const parsed = parseInput(inputValue);
     if (parsed) {
-      // Format as YYYY-MM-DD without timezone conversion
       onChange(format(parsed, "yyyy-MM-dd"));
       setInputValue(format(parsed, "MMM yyyy"));
     } else if (inputValue.trim() === "") {
       onChange(null);
     } else {
-      // Reset to previous valid value
       if (value) {
         const date = new Date(value);
         if (isValid(date)) {
@@ -107,17 +117,24 @@ const MonthYearPicker = ({
     }
   };
 
-  const handleMonthSelect = (date: Date | undefined) => {
-    if (date) {
-      const monthStart = startOfMonth(date);
-      // Format as YYYY-MM-DD without timezone conversion
-      onChange(format(monthStart, "yyyy-MM-dd"));
-      setOpen(false);
+  const handleMonthClick = (monthIndex: number) => {
+    // Don't allow future months
+    if (viewYear === currentYear && monthIndex > currentMonth) {
+      return;
     }
+    
+    const date = new Date(viewYear, monthIndex, 1);
+    onChange(format(date, "yyyy-MM-dd"));
+    setOpen(false);
   };
 
-  const startMonth = new Date(1990, 0);
-  const endMonth = new Date();
+  const isMonthDisabled = (monthIndex: number) => {
+    return viewYear === currentYear && monthIndex > currentMonth;
+  };
+
+  const isMonthSelected = (monthIndex: number) => {
+    return selectedYear === viewYear && selectedMonth === monthIndex;
+  };
 
   return (
     <div className="relative flex">
@@ -146,21 +163,53 @@ const MonthYearPicker = ({
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="pointer-events-auto">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleMonthSelect}
-              defaultMonth={selectedDate}
-              disabled={(date) => date > new Date()}
-              captionLayout="dropdown"
-              startMonth={startMonth}
-              endMonth={endMonth}
-              autoFocus
-            />
-            {/* Quick actions */}
-            <div className="flex gap-2 px-3 pb-3 border-t border-border">
+        <PopoverContent className="w-[280px] p-0" align="start">
+          <div className="p-3 pointer-events-auto">
+            {/* Year Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setViewYear(y => y - 1)}
+                disabled={viewYear <= 1990}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm font-semibold">{viewYear}</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setViewYear(y => y + 1)}
+                disabled={viewYear >= currentYear}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Month Grid */}
+            <div className="grid grid-cols-3 gap-2">
+              {MONTHS.map((month, index) => (
+                <Button
+                  key={month}
+                  variant={isMonthSelected(index) ? "default" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "h-9",
+                    isMonthDisabled(index) && "opacity-50 cursor-not-allowed",
+                    isMonthSelected(index) && "bg-primary text-primary-foreground"
+                  )}
+                  onClick={() => handleMonthClick(index)}
+                  disabled={isMonthDisabled(index)}
+                >
+                  {month}
+                </Button>
+              ))}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex gap-2 mt-4 pt-3 border-t border-border">
               <Button
                 variant="outline"
                 size="sm"
