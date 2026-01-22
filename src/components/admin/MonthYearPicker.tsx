@@ -111,7 +111,8 @@ const MonthYearPicker = ({
   };
 
   const handleMonthSelect = (monthIndex: number) => {
-    const newDate = startOfMonth(setMonth(setYear(new Date(), viewYear), monthIndex));
+    // Use day 1 to avoid month rollover issues (e.g., Jan 31 -> Feb 31 rolls to Mar 3)
+    const newDate = new Date(viewYear, monthIndex, 1);
     onChange(newDate.toISOString().split("T")[0]);
     setOpen(false);
   };
