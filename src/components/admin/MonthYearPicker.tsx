@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { format, parse, isValid, setMonth, setYear, startOfMonth } from "date-fns";
-import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { format, parse, isValid, startOfMonth } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -17,11 +18,6 @@ interface MonthYearPickerProps {
   placeholder?: string;
 }
 
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-];
-
 const MonthYearPicker = ({
   value,
   onChange,
@@ -30,24 +26,25 @@ const MonthYearPicker = ({
 }: MonthYearPickerProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [viewYear, setViewYear] = useState(new Date().getFullYear());
-  const [mode, setMode] = useState<"month" | "year">("month");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Sync input value with prop
+  // Sync input value and selected date with prop
   useEffect(() => {
     if (value) {
       try {
         const date = new Date(value);
         if (isValid(date)) {
           setInputValue(format(date, "MMM yyyy"));
-          setViewYear(date.getFullYear());
+          setSelectedDate(startOfMonth(date));
         }
       } catch {
         setInputValue("");
+        setSelectedDate(undefined);
       }
     } else {
       setInputValue("");
+      setSelectedDate(undefined);
     }
   }, [value]);
 
@@ -84,9 +81,9 @@ const MonthYearPicker = ({
   const handleInputBlur = () => {
     const parsed = parseInput(inputValue);
     if (parsed) {
-      onChange(parsed.toISOString().split("T")[0]);
+      // Format as YYYY-MM-DD without timezone conversion
+      onChange(format(parsed, "yyyy-MM-dd"));
       setInputValue(format(parsed, "MMM yyyy"));
-      setViewYear(parsed.getFullYear());
     } else if (inputValue.trim() === "") {
       onChange(null);
     } else {
@@ -110,26 +107,14 @@ const MonthYearPicker = ({
     }
   };
 
-  const handleMonthSelect = (monthIndex: number) => {
-    // Use day 1 to avoid month rollover issues (e.g., Jan 31 -> Feb 31 rolls to Mar 3)
-    const newDate = new Date(viewYear, monthIndex, 1);
-    onChange(newDate.toISOString().split("T")[0]);
-    setOpen(false);
+  const handleMonthSelect = (date: Date | undefined) => {
+    if (date) {
+      const monthStart = startOfMonth(date);
+      // Format as YYYY-MM-DD without timezone conversion
+      onChange(format(monthStart, "yyyy-MM-dd"));
+      setOpen(false);
+    }
   };
-
-  const handleYearSelect = (year: number) => {
-    setViewYear(year);
-    setMode("month");
-  };
-
-  const selectedDate = value ? new Date(value) : null;
-  const selectedMonth = selectedDate?.getMonth();
-  const selectedYear = selectedDate?.getFullYear();
-
-  // Generate year range for year picker
-  const currentYear = new Date().getFullYear();
-  const startYear = Math.floor(viewYear / 12) * 12;
-  const years = Array.from({ length: 12 }, (_, i) => startYear + i);
 
   return (
     <div className="relative flex">
@@ -158,106 +143,25 @@ const MonthYearPicker = ({
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[280px] p-0" align="start">
-          <div className="p-3 pointer-events-auto">
-            {/* Header with navigation */}
-            <div className="flex items-center justify-between mb-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => {
-                  if (mode === "month") {
-                    setViewYear((y) => y - 1);
-                  } else {
-                    setViewYear((y) => y - 12);
-                  }
-                }}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="font-medium"
-                onClick={() => setMode(mode === "month" ? "year" : "month")}
-              >
-                {mode === "month" ? viewYear : `${startYear} - ${startYear + 11}`}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => {
-                  if (mode === "month") {
-                    setViewYear((y) => y + 1);
-                  } else {
-                    setViewYear((y) => y + 12);
-                  }
-                }}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Month or Year grid */}
-            {mode === "month" ? (
-              <div className="grid grid-cols-3 gap-2">
-                {MONTHS.map((month, index) => {
-                  const isSelected = selectedMonth === index && selectedYear === viewYear;
-                  const isFuture = viewYear > currentYear || 
-                    (viewYear === currentYear && index > new Date().getMonth());
-                  
-                  return (
-                    <Button
-                      key={month}
-                      variant={isSelected ? "default" : "ghost"}
-                      size="sm"
-                      className={cn(
-                        "h-9",
-                        isSelected && "bg-primary text-primary-foreground",
-                        isFuture && "text-muted-foreground/50"
-                      )}
-                      onClick={() => handleMonthSelect(index)}
-                    >
-                      {month}
-                    </Button>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
-                {years.map((year) => {
-                  const isSelected = selectedYear === year;
-                  const isFuture = year > currentYear;
-                  
-                  return (
-                    <Button
-                      key={year}
-                      variant={isSelected ? "default" : "ghost"}
-                      size="sm"
-                      className={cn(
-                        "h-9",
-                        isSelected && "bg-primary text-primary-foreground",
-                        isFuture && "text-muted-foreground/50"
-                      )}
-                      onClick={() => handleYearSelect(year)}
-                    >
-                      {year}
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
-
+        <PopoverContent className="w-auto p-0" align="start">
+          <div className="pointer-events-auto">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleMonthSelect}
+              defaultMonth={selectedDate}
+              disabled={(date) => date > new Date()}
+              initialFocus
+            />
             {/* Quick actions */}
-            <div className="flex gap-2 mt-3 pt-3 border-t border-border">
+            <div className="flex gap-2 px-3 pb-3 border-t border-border">
               <Button
                 variant="outline"
                 size="sm"
                 className="flex-1 text-xs"
                 onClick={() => {
                   const today = startOfMonth(new Date());
-                  onChange(today.toISOString().split("T")[0]);
+                  onChange(format(today, "yyyy-MM-dd"));
                   setOpen(false);
                 }}
               >
