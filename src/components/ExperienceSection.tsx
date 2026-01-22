@@ -29,41 +29,35 @@ const formatExperience = (exp: ExperiencePublic): FormattedExperience => {
 const ExperienceCard = ({ experience, index }: { experience: FormattedExperience; index: number }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="relative"
     >
-      <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:ml-0' : 'md:pl-12 md:ml-auto'}`}>
-        <div className="glass rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-border/50">
-          {/* Timeline dot */}
-          <div className="absolute left-0 md:left-1/2 top-6 w-3 h-3 bg-primary rounded-full md:-translate-x-1/2 hidden md:block ring-4 ring-background" />
-          
-          <div className="p-6">
-            <div className="flex flex-col gap-2 mb-4">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-xl font-serif font-semibold text-foreground">
-                  {experience.company}
-                </h3>
-                <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0">
-                  {experience.dateRange}
-                </span>
-              </div>
-              <p className="text-primary font-medium">{experience.titleProgression}</p>
+      <div className="glass rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-border/50">
+        <div className="p-6">
+          <div className="flex flex-col gap-2 mb-4">
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="text-xl font-serif font-semibold text-foreground">
+                {experience.company}
+              </h3>
+              <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0">
+                {experience.dateRange}
+              </span>
             </div>
-
-            {experience.achievements.length > 0 && (
-              <ul className="space-y-2">
-                {experience.achievements.map((achievement, i) => (
-                  <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
-                    <span className="text-primary mt-1.5 shrink-0">•</span>
-                    <span>{achievement}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <p className="text-primary font-medium">{experience.titleProgression}</p>
           </div>
+
+          {experience.achievements.length > 0 && (
+            <ul className="space-y-2">
+              {experience.achievements.map((achievement, i) => (
+                <li key={i} className="flex items-center gap-3 text-muted-foreground text-sm leading-relaxed">
+                  <span className="text-primary shrink-0">•</span>
+                  <span>{achievement}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </motion.div>
@@ -119,10 +113,7 @@ const ExperienceSection = () => {
         ) : experiences.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="relative space-y-8">
-            {/* Central timeline line for desktop */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2 hidden md:block" />
-            
+          <div className="space-y-6">
             {experiences.map((exp, index) => (
               <ExperienceCard key={exp.id} experience={exp} index={index} />
             ))}
