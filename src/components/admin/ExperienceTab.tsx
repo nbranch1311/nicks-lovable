@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import MonthYearPicker from "./MonthYearPicker";
+import { MonthYearPicker } from "@/components/ui/month-year-picker";
 
 interface ExperienceTabProps {
   experiences: Experience[];
@@ -153,18 +153,22 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
                   <div className="space-y-2">
                     <Label>Start Date</Label>
                     <MonthYearPicker
-                      value={exp.start_date}
-                      onChange={(date) => updateExperience(index, "start_date", date)}
+                      value={exp.start_date ? { month: new Date(exp.start_date).getMonth(), year: new Date(exp.start_date).getFullYear() } : undefined}
+                      onChange={(val) => updateExperience(index, "start_date", `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`)}
                       placeholder="e.g. Jan 2020"
+                      minYear={1970}
+                      maxYear={new Date().getFullYear() + 5}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>End Date</Label>
                     <MonthYearPicker
-                      value={exp.end_date}
-                      onChange={(date) => updateExperience(index, "end_date", date)}
+                      value={exp.end_date ? { month: new Date(exp.end_date).getMonth(), year: new Date(exp.end_date).getFullYear() } : undefined}
+                      onChange={(val) => updateExperience(index, "end_date", `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`)}
                       disabled={exp.is_current}
                       placeholder="e.g. Dec 2023"
+                      minYear={1970}
+                      maxYear={new Date().getFullYear() + 5}
                     />
                   </div>
                   <div className="flex items-center space-x-2 pt-8">
