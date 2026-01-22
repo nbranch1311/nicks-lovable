@@ -117,13 +117,24 @@ export const usePublicExperiences = () => {
   return useQuery({
     queryKey: ['public-experiences'],
     queryFn: async (): Promise<ExperiencePublic[]> => {
-      const { data, error } = await supabase
+      // Try public view first
+      const { data: viewData, error: viewError } = await supabase
         .from('experiences_public')
         .select('*')
         .order('display_order', { ascending: true });
       
+      if (!viewError && viewData && viewData.length > 0) {
+        return viewData as ExperiencePublic[];
+      }
+      
+      // Fallback to base table (for when view is empty or doesn't exist)
+      const { data, error } = await supabase
+        .from('experiences')
+        .select('id, candidate_id, company_name, title, title_progression, start_date, end_date, is_current, bullet_points, display_order')
+        .order('display_order', { ascending: true });
+      
       if (error) {
-        console.error('Error fetching public experiences:', error);
+        console.error('Error fetching experiences:', error);
         return [];
       }
       return (data as ExperiencePublic[]) || [];
