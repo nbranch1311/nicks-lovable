@@ -1,5 +1,7 @@
 import { Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { usePublicProfile } from "@/hooks/usePublicData";
 
 const Footer = () => {
@@ -29,32 +31,40 @@ const Footer = () => {
           {/* Social Links */}
           <div className="flex justify-center gap-4 mb-8">
             {githubUrl && (
-              <a
-                href={githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full glass text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
               >
-                <Github className="w-5 h-5" />
-              </a>
+                <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+                  <Github className="w-5 h-5" />
+                </a>
+              </Button>
             )}
             {linkedinUrl && (
-              <a
-                href={linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full glass text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
               >
-                <Linkedin className="w-5 h-5" />
-              </a>
+                <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </Button>
             )}
             {email && (
-              <a
-                href={`mailto:${email}`}
-                className="w-10 h-10 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 rounded-full glass text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
               >
-                <Mail className="w-5 h-5" />
-              </a>
+                <a href={`mailto:${email}`}>
+                  <Mail className="w-5 h-5" />
+                </a>
+              </Button>
             )}
           </div>
 
@@ -64,7 +74,8 @@ const Footer = () => {
             but careers can be exciting and alwaysworth exploring. I am not a rapper.
           </p>
 
-          <div className="mt-8 pt-8 border-t border-border/30">
+          <div className="mt-8 pt-8">
+            <Separator className="mb-8 bg-border/30" />
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} Nick Branch. All rights reserved.
             </p>

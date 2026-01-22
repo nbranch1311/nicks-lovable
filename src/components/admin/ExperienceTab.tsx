@@ -208,12 +208,14 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
                           <span>• {bullet}</span>
                         </ItemContent>
                         <ItemActions>
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => removeBulletPoint(index, bulletIndex)}
-                            className="text-muted-foreground hover:text-destructive"
+                            className="h-6 w-6 text-muted-foreground hover:text-destructive"
                           >
                             <X className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </ItemActions>
                       </Item>
                     ))}

@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import { motion } from "framer-motion";
 import Logo from "./Logo";
 import { useAssetDownload } from "@/hooks/useAssetDownload";
@@ -49,25 +55,41 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
         </div>
 
         {/* Center: Navigation Links (true-centered) */}
-        <div className="hidden md:flex items-center justify-center gap-6">
-          <button
-            onClick={() => scrollToSection("experience")}
-            className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-          >
-            Experience
-          </button>
-          <button
-            onClick={() => scrollToSection("fit-check")}
-            className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-          >
-            Fit Check
-          </button>
-          <button
-            onClick={() => scrollToSection("projects")}
-            className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-          >
-            Projects
-          </button>
+        <div className="hidden md:flex items-center justify-center">
+          <NavigationMenu>
+            <NavigationMenuList className="space-x-6">
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <button
+                    onClick={() => scrollToSection("experience")}
+                    className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+                  >
+                    Experience
+                  </button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <button
+                    onClick={() => scrollToSection("fit-check")}
+                    className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+                  >
+                    Fit Check
+                  </button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <button
+                    onClick={() => scrollToSection("projects")}
+                    className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+                  >
+                    Projects
+                  </button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
 
         {/* Action Buttons */}

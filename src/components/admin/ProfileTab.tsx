@@ -114,9 +114,14 @@ const ProfileTab = ({ profile, setProfile }: ProfileTabProps) => {
               {(profile.target_titles || []).map((title, index) => (
                 <Badge key={index} variant="secondary" className="flex items-center gap-1">
                   {title}
-                  <button onClick={() => removeTargetTitle(index)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeTargetTitle(index)}
+                    className="h-5 w-5 text-muted-foreground hover:text-destructive"
+                  >
                     <X className="h-3 w-3" />
-                  </button>
+                  </Button>
                 </Badge>
               ))}
             </div>
