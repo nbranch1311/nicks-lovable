@@ -65,7 +65,7 @@ const AIInstructionsTab = ({ aiInstructions, setAiInstructions }: AIInstructions
 
   return (
     <div className="space-y-6">
-      <Card className="glass border-border/50 bg-primary/5 border-primary/20">
+      <Card className="glass bg-primary/5 border-primary/20">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-primary" />
