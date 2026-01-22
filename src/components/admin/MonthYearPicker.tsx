@@ -143,45 +143,43 @@ const MonthYearPicker = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <div className="pointer-events-auto">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleMonthSelect}
-              defaultMonth={selectedDate}
-              disabled={(date) => date > new Date()}
-              captionLayout="dropdown"
-              startMonth={startMonth}
-              endMonth={endMonth}
-              autoFocus
-            />
-            {/* Quick actions */}
-            <div className="flex gap-2 px-3 pb-3 border-t border-border">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 text-xs"
-                onClick={() => {
-                  const today = startOfMonth(new Date());
-                  onChange(format(today, "yyyy-MM-dd"));
-                  setOpen(false);
-                }}
-              >
-                This Month
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex-1 text-xs text-muted-foreground"
-                onClick={() => {
-                  onChange(null);
-                  setInputValue("");
-                  setOpen(false);
-                }}
-              >
-                Clear
-              </Button>
-            </div>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleMonthSelect}
+            month={selectedDate}
+            onMonthChange={setSelectedDate}
+            disabled={(date) => date > new Date()}
+            captionLayout="dropdown"
+            startMonth={startMonth}
+            endMonth={endMonth}
+            className="rounded-md border-0"
+          />
+          <div className="flex gap-2 px-3 pb-3 border-t border-border">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={() => {
+                const today = startOfMonth(new Date());
+                onChange(format(today, "yyyy-MM-dd"));
+                setOpen(false);
+              }}
+            >
+              This Month
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-1 text-xs text-muted-foreground"
+              onClick={() => {
+                onChange(null);
+                setInputValue("");
+                setOpen(false);
+              }}
+            >
+              Clear
+            </Button>
           </div>
         </PopoverContent>
       </Popover>
