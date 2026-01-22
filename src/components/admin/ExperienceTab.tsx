@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
-import { format } from "date-fns";
+import { Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import MonthYearPicker from "./MonthYearPicker";
 
 interface ExperienceTabProps {
   experiences: Experience[];
@@ -154,60 +152,20 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Start Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !exp.start_date && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {exp.start_date ? format(new Date(exp.start_date), "MMM yyyy") : "Pick date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={exp.start_date ? new Date(exp.start_date) : undefined}
-                          onSelect={(date) =>
-                            updateExperience(index, "start_date", date?.toISOString().split("T")[0] || null)
-                          }
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <MonthYearPicker
+                      value={exp.start_date}
+                      onChange={(date) => updateExperience(index, "start_date", date)}
+                      placeholder="e.g. Jan 2020"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>End Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !exp.end_date && "text-muted-foreground"
-                          )}
-                          disabled={exp.is_current}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {exp.end_date ? format(new Date(exp.end_date), "MMM yyyy") : "Pick date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={exp.end_date ? new Date(exp.end_date) : undefined}
-                          onSelect={(date) =>
-                            updateExperience(index, "end_date", date?.toISOString().split("T")[0] || null)
-                          }
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <MonthYearPicker
+                      value={exp.end_date}
+                      onChange={(date) => updateExperience(index, "end_date", date)}
+                      disabled={exp.is_current}
+                      placeholder="e.g. Dec 2023"
+                    />
                   </div>
                   <div className="flex items-center space-x-2 pt-8">
                     <Checkbox
