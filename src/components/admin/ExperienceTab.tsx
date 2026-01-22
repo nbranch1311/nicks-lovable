@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Item, ItemActions, ItemContent, ItemGroup } from "@/components/ui/item";
-import { Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { MonthYearPicker } from "@/components/admin/MonthYearPicker";
@@ -57,6 +57,20 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
     );
   };
 
+  const moveExperience = (index: number, direction: "up" | "down") => {
+    const newIndex = direction === "up" ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= experiences.length) return;
+    
+    setExperiences((prev) => {
+      const updated = [...prev];
+      const temp = updated[index];
+      updated[index] = updated[newIndex];
+      updated[newIndex] = temp;
+      // Update display_order for both swapped items
+      return updated.map((exp, i) => ({ ...exp, display_order: i }));
+    });
+  };
+
   const addBulletPoint = (index: number) => {
     const bullet = newBullet[index]?.trim();
     if (bullet) {
@@ -104,7 +118,26 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
+                    <div className="flex flex-col">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        onClick={() => moveExperience(index, "up")}
+                        disabled={index === 0}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5 text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        onClick={() => moveExperience(index, "down")}
+                        disabled={index === experiences.length - 1}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </div>
                     <CardTitle className="text-lg">
                       {exp.company_name || "New Experience"}{" "}
                       {exp.title && <span className="text-muted-foreground font-normal">— {exp.title}</span>}
