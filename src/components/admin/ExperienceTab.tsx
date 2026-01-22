@@ -204,7 +204,7 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
                     {(exp.bullet_points || []).map((bullet, bulletIndex) => (
                       <li
                         key={bulletIndex}
-                        className="flex items-start gap-2 bg-muted/50 p-2 rounded-md text-sm"
+                        className="flex items-center gap-2 bg-muted/50 py-2 px-3 rounded-md text-sm"
                       >
                         <span className="flex-1">• {bullet}</span>
                         <button
