@@ -18,7 +18,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         month_caption: "flex justify-center pt-1 relative items-center mb-2",
         caption_label: "text-sm font-medium hidden",
         dropdowns: "flex items-center gap-2",
-        dropdown: "appearance-none bg-background border border-input rounded-md px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+        dropdown: "relative",
         months_dropdown: "",
         years_dropdown: "",
         nav: "flex items-center gap-1",
@@ -51,6 +51,22 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         Chevron: ({ orientation }) => {
           if (orientation === "left") return <ChevronLeft className="h-4 w-4" />;
           return <ChevronRight className="h-4 w-4" />;
+        },
+        Dropdown: ({ value, onChange, options, ...dropdownProps }) => {
+          return (
+            <select
+              value={value}
+              onChange={(e) => onChange?.(e as unknown as React.ChangeEvent<HTMLSelectElement>)}
+              className="appearance-none bg-background border border-input rounded-md px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+              {...dropdownProps}
+            >
+              {options?.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          );
         },
       }}
       {...props}
