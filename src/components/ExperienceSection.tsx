@@ -2,43 +2,7 @@ import { motion } from "framer-motion";
 import { usePublicExperiences, ExperiencePublic } from "@/hooks/usePublicData";
 import { format } from "date-fns";
 import ScrollDownCaret from "@/components/ScrollDownCaret";
-
-// Fallback data when no database experiences exist
-const fallbackExperiences = [
-  {
-    id: "exp1",
-    company: "TechCorp Inc.",
-    dateRange: "2021 - Present",
-    titleProgression: "Senior → Staff Engineer",
-    achievements: [
-      "Led migration of monolith to microservices, reducing deployment time by 85%",
-      "Built real-time analytics pipeline processing 2M events/second",
-      "Mentored 8 engineers, 3 promoted to senior level",
-    ],
-  },
-  {
-    id: "exp2",
-    company: "StartupXYZ",
-    dateRange: "2018 - 2021",
-    titleProgression: "Engineer → Senior Engineer",
-    achievements: [
-      "Built core payment infrastructure handling $50M+ annually",
-      "Reduced API latency by 60% through caching and query optimization",
-      "Established engineering practices: CI/CD, code review, on-call rotation",
-    ],
-  },
-  {
-    id: "exp3",
-    company: "BigTech Corp",
-    dateRange: "2015 - 2018",
-    titleProgression: "Junior → Mid-Level Engineer",
-    achievements: [
-      "Contributed to search ranking algorithm improvements (+3% relevance)",
-      "Built internal tools used by 500+ engineers daily",
-      "Led intern program, managed 4 summer interns",
-    ],
-  },
-];
+import { Briefcase } from "lucide-react";
 
 interface FormattedExperience {
   id: string;
@@ -51,7 +15,7 @@ interface FormattedExperience {
 const formatExperience = (exp: ExperiencePublic): FormattedExperience => {
   const startDate = exp.start_date ? format(new Date(exp.start_date), "MMM yyyy") : "";
   const endDate = exp.is_current ? "Present" : exp.end_date ? format(new Date(exp.end_date), "MMM yyyy") : "";
-  const dateRange = startDate && endDate ? `${startDate} - ${endDate}` : startDate || endDate || "";
+  const dateRange = startDate && endDate ? `${startDate} – ${endDate}` : startDate || endDate || "";
 
   return {
     id: exp.id,
@@ -62,60 +26,83 @@ const formatExperience = (exp: ExperiencePublic): FormattedExperience => {
   };
 };
 
-const ExperienceCard = ({ experience }: { experience: FormattedExperience }) => {
+const ExperienceCard = ({ experience, index }: { experience: FormattedExperience; index: number }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.5 }}
-      className="glass rounded-xl overflow-hidden"
+      initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="relative"
     >
-      <div className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-serif font-semibold text-foreground">
-              {experience.company}
-            </h3>
-            <p className="text-primary font-medium">{experience.titleProgression}</p>
-          </div>
-          <span className="text-sm text-muted-foreground mt-2 md:mt-0">
-            {experience.dateRange}
-          </span>
-        </div>
+      <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:ml-0' : 'md:pl-12 md:ml-auto'}`}>
+        <div className="glass rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-border/50">
+          {/* Timeline dot */}
+          <div className="absolute left-0 md:left-1/2 top-6 w-3 h-3 bg-primary rounded-full md:-translate-x-1/2 hidden md:block ring-4 ring-background" />
+          
+          <div className="p-6">
+            <div className="flex flex-col gap-2 mb-4">
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="text-xl font-serif font-semibold text-foreground">
+                  {experience.company}
+                </h3>
+                <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0">
+                  {experience.dateRange}
+                </span>
+              </div>
+              <p className="text-primary font-medium">{experience.titleProgression}</p>
+            </div>
 
-        {experience.achievements.length > 0 && (
-          <ul className="space-y-2">
-            {experience.achievements.map((achievement, index) => (
-              <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                <span className="text-primary mt-1">•</span>
-                {achievement}
-              </li>
-            ))}
-          </ul>
-        )}
+            {experience.achievements.length > 0 && (
+              <ul className="space-y-2">
+                {experience.achievements.map((achievement, i) => (
+                  <li key={i} className="flex items-start gap-3 text-muted-foreground text-sm leading-relaxed">
+                    <span className="text-primary mt-1.5 shrink-0">•</span>
+                    <span>{achievement}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
     </motion.div>
   );
 };
 
+const EmptyState = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className="text-center py-16"
+  >
+    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
+      <Briefcase className="w-8 h-8 text-muted-foreground" />
+    </div>
+    <h3 className="text-lg font-medium text-foreground mb-2">No experiences yet</h3>
+    <p className="text-muted-foreground max-w-md mx-auto">
+      Experience details will appear here once added through the admin panel.
+    </p>
+  </motion.div>
+);
+
 const ExperienceSection = () => {
   const { data: dbExperiences, isLoading } = usePublicExperiences();
   
-  // Use database experiences if available, otherwise fallback
   const experiences: FormattedExperience[] = dbExperiences?.length 
     ? dbExperiences.map(formatExperience)
-    : fallbackExperiences;
+    : [];
 
   return (
-    <section id="experience" className="py-24 px-6 relative">
-      <div className="container mx-auto max-w-4xl">
+    <section id="experience" className="py-24 px-6 relative bg-muted/30">
+      <div className="container mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
             Experience
@@ -125,15 +112,22 @@ const ExperienceSection = () => {
           </p>
         </motion.div>
 
-        <div className="space-y-6">
-          {isLoading ? (
-            <div className="text-center text-muted-foreground">Loading experiences...</div>
-          ) : (
-            experiences.map((exp) => (
-              <ExperienceCard key={exp.id} experience={exp} />
-            ))
-          )}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          </div>
+        ) : experiences.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="relative space-y-8">
+            {/* Central timeline line for desktop */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border -translate-x-1/2 hidden md:block" />
+            
+            {experiences.map((exp, index) => (
+              <ExperienceCard key={exp.id} experience={exp} index={index} />
+            ))}
+          </div>
+        )}
       </div>
 
       <ScrollDownCaret nextSectionId="skills" ariaLabel="Scroll to Skills" />
