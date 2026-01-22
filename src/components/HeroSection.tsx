@@ -1,5 +1,6 @@
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { usePublicProfile } from "@/hooks/usePublicData";
 import ScrollDownCaret from "@/components/ScrollDownCaret";
@@ -56,14 +57,18 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse-slow" />
-          <span className="text-sm text-muted-foreground">
-            {getAvailabilityText()} for{" "}
-            <span className="text-foreground font-medium">{targetTitles.join(", ")}</span> at{" "}
-            <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span>
-          </span>
+          <Badge
+            variant="outline"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-normal border-transparent bg-transparent mb-8"
+          >
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse-slow" />
+            <span className="text-muted-foreground">
+              {getAvailabilityText()} for{" "}
+              <span className="text-foreground font-medium">{targetTitles.join(", ")}</span> at{" "}
+              <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span>
+            </span>
+          </Badge>
         </motion.div>
 
         {/* Name */}
@@ -104,12 +109,13 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           className="flex flex-wrap justify-center gap-3 mb-10"
         >
           {fallbackCompanies.map((company) => (
-            <span
+            <Badge
               key={company}
-              className="px-4 py-2 rounded-full glass text-sm text-muted-foreground hover:text-foreground transition-colors"
+              variant="outline"
+              className="px-4 py-2 rounded-full glass text-sm text-muted-foreground hover:text-foreground transition-colors border-transparent bg-transparent font-normal"
             >
               {company}
-            </span>
+            </Badge>
           ))}
         </motion.div>
 
