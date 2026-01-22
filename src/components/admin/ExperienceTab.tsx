@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Item, ItemActions, ItemContent, ItemGroup } from "@/components/ui/item";
 import { Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -200,22 +201,23 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <ul className="space-y-2 mt-2">
+                  <ItemGroup className="space-y-2 mt-2">
                     {(exp.bullet_points || []).map((bullet, bulletIndex) => (
-                      <li
-                        key={bulletIndex}
-                        className="flex items-center gap-2 bg-muted/50 py-2 px-3 rounded-md text-sm"
-                      >
-                        <span className="flex-1">• {bullet}</span>
-                        <button
-                          onClick={() => removeBulletPoint(index, bulletIndex)}
-                          className="text-muted-foreground hover:text-destructive"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </li>
+                      <Item key={bulletIndex} variant="muted" size="sm">
+                        <ItemContent className="flex-1">
+                          <span>• {bullet}</span>
+                        </ItemContent>
+                        <ItemActions>
+                          <button
+                            onClick={() => removeBulletPoint(index, bulletIndex)}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </ItemActions>
+                      </Item>
                     ))}
-                  </ul>
+                  </ItemGroup>
                 </div>
 
                 {/* Private AI Context - Collapsible */}
