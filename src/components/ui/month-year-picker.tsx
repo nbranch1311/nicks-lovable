@@ -1,26 +1,3 @@
-/**
- * MonthYearPicker Component
- *
- * OPEN QUESTIONS (answered):
- *
- * 1. Should the value be stored as a Date or as { month, year }?
- *    → We use { month: number; year: number } for these reasons:
- *      - Cleaner API: no timezone ambiguity, no day normalization needed
- *      - Explicit semantics: a "month-year" picker shouldn't imply a specific day
- *      - Easier validation: just check number ranges
- *      - Simpler serialization for forms/APIs
- *    → We provide toDate() helper for Date conversion when needed
- *
- * 2. How should localization be handled later?
- *    → Month names use Intl.DateTimeFormat with optional locale prop
- *    → TODO: Accept locale prop and pass to formatter
- *    → TODO: Consider react-intl or i18next integration
- *
- * 3. Should this support range selection in the future?
- *    → Current architecture allows extension via mode prop
- *    → TODO: Add "range" mode with { start: MonthYearValue; end: MonthYearValue }
- */
-
 import * as React from "react";
 import { ChevronLeft, ChevronRight, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,51 +7,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type {
+  MonthYearPickerMode,
+  MonthYearPickerProps,
+  MonthYearValue,
+} from "./MonthYearPickerTypes";
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
-/** Represents a month-year value without a specific day */
-export interface MonthYearValue {
-  month: number; // 0-11 (JavaScript Date convention)
-  year: number;
-}
-
-/** Picker mode determines which selectors are shown */
-export type MonthYearPickerMode = "month-year" | "month-only" | "year-only";
-
 /** View state for internal navigation */
 type PickerView = "months" | "years";
-
-export interface MonthYearPickerProps {
-  /** Controlled value */
-  value?: MonthYearValue;
-  /** Default value for uncontrolled usage */
-  defaultValue?: MonthYearValue;
-  /** Callback when value changes */
-  onChange?: (value: MonthYearValue) => void;
-  /** Minimum selectable year */
-  minYear?: number;
-  /** Maximum selectable year */
-  maxYear?: number;
-  /** Minimum selectable month (only applies when year equals minYear) */
-  minMonth?: number;
-  /** Maximum selectable month (only applies when year equals maxYear) */
-  maxMonth?: number;
-  /** Disable the picker */
-  disabled?: boolean;
-  /** Error message for form validation */
-  error?: string;
-  /** Additional CSS classes */
-  className?: string;
-  /** Picker mode */
-  mode?: MonthYearPickerMode;
-  /** Placeholder text */
-  placeholder?: string;
-  /** Locale for month names (default: browser locale) */
-  locale?: string;
-}
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -130,23 +74,6 @@ function formatMonthYear(
     default:
       return `${monthNames[value.month]} ${value.year}`;
   }
-}
-
-/**
- * Convert MonthYearValue to Date (first day of month at midnight UTC)
- */
-export function monthYearToDate(value: MonthYearValue): Date {
-  return new Date(value.year, value.month, 1, 0, 0, 0, 0);
-}
-
-/**
- * Convert Date to MonthYearValue
- */
-export function dateToMonthYear(date: Date): MonthYearValue {
-  return {
-    month: date.getMonth(),
-    year: date.getFullYear(),
-  };
 }
 
 /**
