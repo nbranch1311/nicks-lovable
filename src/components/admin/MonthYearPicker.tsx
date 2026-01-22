@@ -161,16 +161,18 @@ const MonthYearPicker = React.forwardRef<HTMLButtonElement, MonthYearPickerProps
     const [view, setView] = React.useState<PickerView>(
       mode === "year-only" ? "years" : "months"
     );
-    
+
     // Year being viewed in month grid (for navigation)
     const [viewYear, setViewYear] = React.useState(currentValue.year);
+    const prevOpenRef = React.useRef(open);
 
     // Reset view when picker opens
     React.useEffect(() => {
-      if (open) {
+      if (open && !prevOpenRef.current) {
         setView(mode === "year-only" ? "years" : "months");
         setViewYear(currentValue.year);
       }
+      prevOpenRef.current = open;
     }, [open, mode, currentValue.year]);
 
     const years = React.useMemo(
@@ -179,12 +181,15 @@ const MonthYearPicker = React.forwardRef<HTMLButtonElement, MonthYearPickerProps
     );
 
     const monthNames = React.useMemo(() => getMonthNames(locale), [locale]);
-    const shortMonthNames = React.useMemo(() => getShortMonthNames(locale), [locale]);
+    const shortMonthNames = React.useMemo(
+      () => getShortMonthNames(locale),
+      [locale]
+    );
 
     const handleMonthSelect = (month: number) => {
       const newValue = { month, year: viewYear };
       setCurrentValue(newValue);
-      
+
       if (mode === "month-only" || mode === "month-year") {
         setOpen(false);
       }
@@ -192,7 +197,7 @@ const MonthYearPicker = React.forwardRef<HTMLButtonElement, MonthYearPickerProps
 
     const handleYearSelect = (year: number) => {
       setViewYear(year);
-      
+
       if (mode === "year-only") {
         setCurrentValue({ ...currentValue, year });
         setOpen(false);
@@ -214,7 +219,8 @@ const MonthYearPicker = React.forwardRef<HTMLButtonElement, MonthYearPickerProps
       }
     };
 
-    const displayValue = currentValue
+    const hasDisplayValue = value !== undefined || defaultValue !== undefined;
+    const displayValue = hasDisplayValue
       ? formatMonthYear(currentValue, mode, locale)
       : null;
 
@@ -242,8 +248,8 @@ const MonthYearPicker = React.forwardRef<HTMLButtonElement, MonthYearPickerProps
             </Button>
           </PopoverTrigger>
 
-          <PopoverContent 
-            className="w-auto p-0 pointer-events-auto" 
+          <PopoverContent
+            className="w-auto p-0 pointer-events-auto"
             align="start"
             sideOffset={4}
           >
@@ -372,7 +378,7 @@ function YearGrid({ years, selectedYear, viewYear, onSelect }: YearGridProps) {
 
     const selectedButton = grid.querySelector('[aria-selected="true"]');
     if (selectedButton) {
-      selectedButton.scrollIntoView({ block: "center", behavior: "instant" });
+      selectedButton.scrollIntoView({ block: "center", behavior: "auto" });
     }
   }, []);
 
@@ -437,7 +443,7 @@ export { MonthYearPicker };
  *
  * ```tsx
  * import { useForm, Controller } from "react-hook-form";
- * import { MonthYearPicker, MonthYearValue } from "@/components/ui/month-year-picker";
+ * import { MonthYearPicker, MonthYearValue } from "@/components/admin/MonthYearPicker";
  *
  * interface FormData {
  *   startDate: MonthYearValue;

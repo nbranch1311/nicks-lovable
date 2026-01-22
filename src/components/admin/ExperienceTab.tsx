@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Plus, Trash2, ChevronDown, GripVertical, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { MonthYearPicker } from "@/components/ui/month-year-picker";
+import { MonthYearPicker } from "@/components/admin/MonthYearPicker";
 
 interface ExperienceTabProps {
   experiences: Experience[];
