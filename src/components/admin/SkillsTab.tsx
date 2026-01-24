@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, Plus, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { MonthYearPicker } from "@/components/admin/MonthYearPicker";
+import type { MonthYearValue } from "@/components/admin/MonthYearPickerTypes";
+import { Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SkillsTabProps {
@@ -154,31 +153,20 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                   </div>
                   <div className="space-y-2">
                     <Label>Last Used</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !skill.last_used && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {skill.last_used ? format(new Date(skill.last_used), "MMM yyyy") : "Select"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={skill.last_used ? new Date(skill.last_used) : undefined}
-                          onSelect={(date) =>
-                            updateSkill(index, "last_used", date?.toISOString().split("T")[0] || null)
-                          }
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <MonthYearPicker
+                      value={skill.last_used ? {
+                        month: new Date(skill.last_used).getMonth(),
+                        year: new Date(skill.last_used).getFullYear()
+                      } : undefined}
+                      onChange={(val: MonthYearValue) => {
+                        // Store as YYYY-MM-01 format for consistency
+                        const dateStr = `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`;
+                        updateSkill(index, "last_used", dateStr);
+                      }}
+                      placeholder="Select"
+                      minYear={1990}
+                      maxYear={new Date().getFullYear()}
+                    />
                   </div>
                 </div>
 
