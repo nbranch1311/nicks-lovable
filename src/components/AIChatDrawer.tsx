@@ -33,7 +33,8 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hi! I'm an AI trained on Nick's experience, projects, and honest self-assessment. Ask me anything—including the hard questions you'd normally save for references.",
+      content:
+        "Hi! I'm an AI trained on Nick's experience, projects, and honest self-assessment. Ask me anything—including the hard questions you'd normally save for references.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -69,11 +70,11 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
     try {
       // Build message history for context (excluding welcome message)
       const messageHistory = [...messages, userMessage]
-        .filter(m => m.id !== "welcome")
-        .map(m => ({ role: m.role, content: m.content }));
+        .filter((m) => m.id !== "welcome")
+        .map((m) => ({ role: m.role, content: m.content }));
 
-      const { data, error } = await supabase.functions.invoke('chat', {
-        body: { messages: messageHistory }
+      const { data, error } = await supabase.functions.invoke("chat", {
+        body: { messages: messageHistory },
       });
 
       if (error) throw error;
@@ -81,14 +82,16 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.message || "I'm sorry, I couldn't generate a response. Bet Nick stopped paying the bill. Tokens ain't cheap yet.",
+        content:
+          data.message ||
+          "I'm sorry, I couldn't generate a response. Bet Nick stopped paying the bill. Tokens ain't cheap yet.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Chat error:", error);
       toast.error("Failed to get response. Please try again.");
-      
+
       // Add error message to chat
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -115,11 +118,7 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
           <SheetPortal>
             {/* Backdrop */}
             <SheetOverlay asChild className="bg-background/80 backdrop-blur-sm">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
             </SheetOverlay>
 
             {/* Drawer */}
@@ -182,9 +181,18 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
                       >
                         <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
                           <div className="flex gap-1">
-                            <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                            <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                            <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                            <span
+                              className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                              style={{ animationDelay: "0ms" }}
+                            />
+                            <span
+                              className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                              style={{ animationDelay: "150ms" }}
+                            />
+                            <span
+                              className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                              style={{ animationDelay: "300ms" }}
+                            />
                           </div>
                         </div>
                       </motion.div>
