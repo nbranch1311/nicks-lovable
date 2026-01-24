@@ -20,17 +20,66 @@ interface AnalysisResponse {
   recommendation: string;
 }
 
+// Input validation constants
+const MAX_JD_LENGTH = 50000;
+const MIN_JD_LENGTH = 50;
+
+// Validate job description input
+function validateJobDescription(input: unknown): { valid: boolean; error?: string; jobDescription?: string } {
+  if (input === null || input === undefined) {
+    return { valid: false, error: "Job description is required" };
+  }
+  
+  if (typeof input !== "string") {
+    return { valid: false, error: "Job description must be a string" };
+  }
+  
+  const trimmed = input.trim();
+  
+  if (trimmed.length < MIN_JD_LENGTH) {
+    return { valid: false, error: `Job description too short (min ${MIN_JD_LENGTH} characters)` };
+  }
+  
+  if (trimmed.length > MAX_JD_LENGTH) {
+    return { valid: false, error: `Job description too long (max ${MAX_JD_LENGTH} characters)` };
+  }
+  
+  return { valid: true, jobDescription: trimmed };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { jobDescription } = await req.json();
-    
-    if (!jobDescription || typeof jobDescription !== "string") {
-      throw new Error("Job description is required");
+    // Parse and validate input
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+    
+    if (!body || typeof body !== "object") {
+      return new Response(
+        JSON.stringify({ error: "Request body must be an object" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const validation = validateJobDescription((body as { jobDescription?: unknown }).jobDescription);
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const jobDescription = validation.jobDescription!;
 
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")?.trim();
     if (!ANTHROPIC_API_KEY) {
@@ -94,9 +143,8 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Anthropic API error:", response.status, errorText);
-      throw new Error(`Anthropic API error: ${response.status}`);
+      console.error("Anthropic API error:", response.status);
+      throw new Error("AI service temporarily unavailable");
     }
 
     const result = await response.json();
@@ -112,7 +160,7 @@ serve(async (req) => {
       }
       analysis = JSON.parse(jsonMatch[0]);
     } catch (parseError) {
-      console.error("Failed to parse analysis response:", content);
+      console.error("Failed to parse analysis response");
       throw new Error("Failed to parse analysis response");
     }
 
@@ -124,7 +172,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Analyze JD function error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An error occurred processing your request" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
