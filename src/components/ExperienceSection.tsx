@@ -48,7 +48,6 @@ const ExperienceCard = ({ experience, index }: { experience: FormattedExperience
             <p className="text-primary font-medium">{experience.titleProgression}</p>
           </div>
 
-<<<<<<< Updated upstream
           {experience.achievements.length > 0 && (
             <ul className="space-y-2">
               {experience.achievements.map((achievement, i) => (
@@ -60,18 +59,6 @@ const ExperienceCard = ({ experience, index }: { experience: FormattedExperience
             </ul>
           )}
         </div>
-=======
-        {experience.achievements.length > 0 && (
-          <ul className="space-y-2">
-            {experience.achievements.map((achievement, index) => (
-              <li key={index} className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-primary mt-1">•</span>
-                {achievement}
-              </li>
-            ))}
-          </ul>
-        )}
->>>>>>> Stashed changes
       </div>
     </motion.div>
   );
