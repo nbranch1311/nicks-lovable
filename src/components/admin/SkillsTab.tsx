@@ -156,14 +156,20 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between h-5">
-                      <Label>Last Used</Label>
+                      <Label className={!skill.last_used ? "text-muted-foreground" : ""}>Last Used</Label>
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id={`current-${index}`}
                           checked={!skill.last_used}
                           onCheckedChange={(checked) => {
                             if (checked) {
+                              // Mark as currently using (clear date)
                               updateSkill(index, "last_used", null);
+                            } else {
+                              // Set to current month/year as starting point for picker
+                              const now = new Date();
+                              const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+                              updateSkill(index, "last_used", dateStr);
                             }
                           }}
                         />
@@ -172,36 +178,20 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                         </Label>
                       </div>
                     </div>
-                    {skill.last_used ? (
-                      <div className="flex gap-2">
-                        <MonthYearPicker
-                          value={{
-                            month: new Date(skill.last_used).getMonth(),
-                            year: new Date(skill.last_used).getFullYear()
-                          }}
-                          onChange={(val: MonthYearValue) => {
-                            const dateStr = `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`;
-                            updateSkill(index, "last_used", dateStr);
-                          }}
-                          placeholder="Select"
-                          minYear={1990}
-                          maxYear={new Date().getFullYear()}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-10 w-10 shrink-0"
-                          onClick={() => updateSkill(index, "last_used", null)}
-                          title="Clear date"
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="h-10 flex items-center text-sm text-muted-foreground px-3 border border-input rounded-md bg-muted/50">
-                        Currently using
-                      </div>
-                    )}
+                    <MonthYearPicker
+                      value={skill.last_used ? {
+                        month: new Date(skill.last_used).getMonth(),
+                        year: new Date(skill.last_used).getFullYear()
+                      } : undefined}
+                      onChange={(val: MonthYearValue) => {
+                        const dateStr = `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`;
+                        updateSkill(index, "last_used", dateStr);
+                      }}
+                      placeholder={!skill.last_used ? "Currently using" : "Select date"}
+                      disabled={!skill.last_used}
+                      minYear={1990}
+                      maxYear={new Date().getFullYear()}
+                    />
                   </div>
                 </div>
 
