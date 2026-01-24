@@ -29,7 +29,7 @@ const createNewSkill = (): Skill => ({
 
 const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
   const addSkill = () => {
-    setSkills((prev) => [...prev, createNewSkill()]);
+    setSkills((prev) => [createNewSkill(), ...prev]);
   };
 
   const removeSkill = (index: number) => {
