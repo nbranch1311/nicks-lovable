@@ -12,6 +12,63 @@ interface Message {
   content: string;
 }
 
+// Input validation constants
+const MAX_MESSAGES = 50;
+const MAX_MESSAGE_LENGTH = 10000;
+const MAX_TOTAL_CONTENT_LENGTH = 100000;
+
+// Validate message format and content
+function validateMessages(messages: unknown): { valid: boolean; error?: string; messages?: Message[] } {
+  if (!Array.isArray(messages)) {
+    return { valid: false, error: "Messages must be an array" };
+  }
+  
+  if (messages.length === 0) {
+    return { valid: false, error: "At least one message is required" };
+  }
+  
+  if (messages.length > MAX_MESSAGES) {
+    return { valid: false, error: `Too many messages (max ${MAX_MESSAGES})` };
+  }
+  
+  let totalLength = 0;
+  const validatedMessages: Message[] = [];
+  
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
+    
+    if (!msg || typeof msg !== "object") {
+      return { valid: false, error: `Message ${i} is invalid` };
+    }
+    
+    if (msg.role !== "user" && msg.role !== "assistant") {
+      return { valid: false, error: `Message ${i} has invalid role` };
+    }
+    
+    if (typeof msg.content !== "string") {
+      return { valid: false, error: `Message ${i} content must be a string` };
+    }
+    
+    const content = msg.content.trim();
+    if (content.length === 0) {
+      return { valid: false, error: `Message ${i} content cannot be empty` };
+    }
+    
+    if (content.length > MAX_MESSAGE_LENGTH) {
+      return { valid: false, error: `Message ${i} exceeds max length (${MAX_MESSAGE_LENGTH} chars)` };
+    }
+    
+    totalLength += content.length;
+    if (totalLength > MAX_TOTAL_CONTENT_LENGTH) {
+      return { valid: false, error: `Total message content exceeds max length (${MAX_TOTAL_CONTENT_LENGTH} chars)` };
+    }
+    
+    validatedMessages.push({ role: msg.role, content });
+  }
+  
+  return { valid: true, messages: validatedMessages };
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -19,7 +76,33 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json() as { messages: Message[] };
+    // Parse and validate input
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (!body || typeof body !== "object") {
+      return new Response(
+        JSON.stringify({ error: "Request body must be an object" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const validation = validateMessages((body as { messages?: unknown }).messages);
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const messages = validation.messages!;
     
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY")?.trim();
     if (!ANTHROPIC_API_KEY) {
@@ -81,9 +164,8 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Anthropic API error:", response.status, errorText);
-      throw new Error(`Anthropic API error: ${response.status}`);
+      console.error("Anthropic API error:", response.status);
+      throw new Error("AI service temporarily unavailable");
     }
 
     const result = await response.json();
@@ -97,7 +179,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Chat function error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An error occurred processing your request" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
