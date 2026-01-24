@@ -96,7 +96,8 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Something went wrong. Add this to things Nick will have to fix. Or feel free to try again.",
+        content:
+          "Something went wrong. Add this to things Nick will have to fix. Or feel free to try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -118,7 +119,11 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
           <SheetPortal>
             {/* Backdrop */}
             <SheetOverlay asChild className="bg-background/80 backdrop-blur-sm">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
             </SheetOverlay>
 
             {/* Drawer */}
@@ -137,8 +142,12 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
                       <MessageCircle className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-foreground">Ask AI About Nick</h3>
-                      <p className="text-xs text-muted-foreground">Trained on real experience</p>
+                      <h3 className="font-semibold text-foreground">
+                        Ask AI About Nick
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        Trained on real experience
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -168,7 +177,9 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
                               : "bg-muted text-foreground rounded-bl-md"
                           }`}
                         >
-                          <p className="text-sm leading-relaxed">{message.content}</p>
+                          <p className="text-sm leading-relaxed">
+                            {message.content}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
@@ -203,7 +214,9 @@ const AIChatDrawer = ({ isOpen, onClose }: AIChatDrawerProps) => {
                 {/* Suggested Questions */}
                 {messages.length <= 2 && (
                   <div className="px-4 pb-2">
-                    <p className="text-xs text-muted-foreground mb-2">Try asking:</p>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Try asking:
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {suggestedQuestions.map((question) => (
                         <Button
