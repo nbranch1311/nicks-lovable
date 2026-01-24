@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { shouldTrackVisitor } from "@/lib/analytics-utils";
 
 const VISITOR_ID_KEY = "portfolio_visitor_id";
 
@@ -32,6 +33,21 @@ export const useVisitorTracking = () => {
     const trackVisitor = async () => {
       try {
         const visitorId = getVisitorId();
+        
+        // Check if we should track this visitor (filters bots, preview, same-session)
+        if (!shouldTrackVisitor()) {
+          // Still fetch current stats without incrementing
+          const { count } = await supabase
+            .from("visitor_sessions")
+            .select("*", { count: "exact", head: true });
+          
+          setStats({
+            uniqueVisitors: count ?? 0,
+            visitorId,
+          });
+          setLoading(false);
+          return;
+        }
         
         // Call the RPC function to track visitor
         const { data, error: rpcError } = await supabase.rpc("track_visitor", {
