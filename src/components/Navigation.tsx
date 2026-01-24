@@ -71,20 +71,20 @@ const Navigation = ({ onOpenChat }: NavigationProps) => {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <button
-                    onClick={() => scrollToSection("fit-check")}
+                    onClick={() => scrollToSection("skills")}
                     className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
                   >
-                    Fit Check
+                    Skills Matrix
                   </button>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <button
-                    onClick={() => scrollToSection("projects")}
+                    onClick={() => scrollToSection("fit-check")}
                     className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
                   >
-                    Projects
+                    Fit Check
                   </button>
                 </NavigationMenuLink>
               </NavigationMenuItem>
