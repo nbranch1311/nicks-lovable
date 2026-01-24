@@ -27,7 +27,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
   const elevatorPitch = profile?.elevator_pitch || 
     "I build high-performance systems that scale. 12 years shipping products used by millions, from early-stage chaos to public company stability.";
   const targetTitles = profile?.target_titles?.length ? profile.target_titles : ["Staff Engineer"];
-  const targetCompanyStages = profile?.target_company_stages?.length ? profile.target_company_stages : ["Series B+ Companies"];
+  const targetCompanyStages = profile?.target_company_stages?.length ? profile.target_company_stages : [];
   const availabilityStatus = profile?.availability_status || "Open to opportunities";
 
   // Format availability badge text
@@ -65,8 +65,10 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse-slow" />
             <span className="text-muted-foreground">
               {getAvailabilityText()} for{" "}
-              <span className="text-foreground font-medium">{targetTitles.join(", ")}</span> at{" "}
-              <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span>
+              <span className="text-foreground font-medium">{targetTitles.join(", ")}</span>
+              {targetCompanyStages.length > 0 && (
+                <> at <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span></>
+              )}
             </span>
           </Badge>
         </motion.div>
