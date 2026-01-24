@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { MonthYearPicker } from "@/components/admin/MonthYearPicker";
 import type { MonthYearValue } from "@/components/admin/MonthYearPickerTypes";
 import { Plus, Trash2 } from "lucide-react";
@@ -152,21 +153,53 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Last Used</Label>
-                    <MonthYearPicker
-                      value={skill.last_used ? {
-                        month: new Date(skill.last_used).getMonth(),
-                        year: new Date(skill.last_used).getFullYear()
-                      } : undefined}
-                      onChange={(val: MonthYearValue) => {
-                        // Store as YYYY-MM-01 format for consistency
-                        const dateStr = `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`;
-                        updateSkill(index, "last_used", dateStr);
-                      }}
-                      placeholder="Select"
-                      minYear={1990}
-                      maxYear={new Date().getFullYear()}
-                    />
+                    <div className="flex items-center justify-between">
+                      <Label>Last Used</Label>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id={`current-${index}`}
+                          checked={!skill.last_used}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              updateSkill(index, "last_used", null);
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`current-${index}`} className="text-xs font-normal cursor-pointer">
+                          Current
+                        </Label>
+                      </div>
+                    </div>
+                    {skill.last_used ? (
+                      <div className="flex gap-2">
+                        <MonthYearPicker
+                          value={{
+                            month: new Date(skill.last_used).getMonth(),
+                            year: new Date(skill.last_used).getFullYear()
+                          }}
+                          onChange={(val: MonthYearValue) => {
+                            const dateStr = `${val.year}-${String(val.month + 1).padStart(2, '0')}-01`;
+                            updateSkill(index, "last_used", dateStr);
+                          }}
+                          placeholder="Select"
+                          minYear={1990}
+                          maxYear={new Date().getFullYear()}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 shrink-0"
+                          onClick={() => updateSkill(index, "last_used", null)}
+                          title="Clear date"
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="h-10 flex items-center text-sm text-muted-foreground px-3 border border-input rounded-md bg-muted/50">
+                        Currently using
+                      </div>
+                    )}
                   </div>
                 </div>
 
