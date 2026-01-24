@@ -21,7 +21,6 @@ interface AnalysisResponse {
 }
 
 // Input validation constants
-const MAX_JD_LENGTH = 50000;
 const MIN_JD_LENGTH = 50;
 
 // Validate job description input
@@ -38,10 +37,6 @@ function validateJobDescription(input: unknown): { valid: boolean; error?: strin
   
   if (trimmed.length < MIN_JD_LENGTH) {
     return { valid: false, error: `Job description too short (min ${MIN_JD_LENGTH} characters)` };
-  }
-  
-  if (trimmed.length > MAX_JD_LENGTH) {
-    return { valid: false, error: `Job description too long (max ${MAX_JD_LENGTH} characters)` };
   }
   
   return { valid: true, jobDescription: trimmed };
