@@ -145,7 +145,12 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="ai" className="mt-6">
-            <AIInstructionsTab aiInstructions={aiInstructions} setAiInstructions={setAiInstructions} />
+            <AIInstructionsTab 
+              aiInstructions={aiInstructions} 
+              setAiInstructions={setAiInstructions}
+              valuesCulture={valuesCulture}
+              setValuesCulture={setValuesCulture}
+            />
           </TabsContent>
         </Tabs>
       </main>
