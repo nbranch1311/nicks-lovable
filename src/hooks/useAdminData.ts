@@ -81,6 +81,7 @@ export interface ValuesCulture {
   how_handle_conflict: string | null;
   how_handle_ambiguity: string | null;
   how_handle_failure: string | null;
+  honesty_level: number;
 }
 
 export interface FAQ {
@@ -131,6 +132,7 @@ const defaultValuesCulture: ValuesCulture = {
   how_handle_conflict: null,
   how_handle_ambiguity: null,
   how_handle_failure: null,
+  honesty_level: 7,
 };
 
 export const useAdminData = () => {

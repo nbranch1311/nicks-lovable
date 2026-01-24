@@ -184,6 +184,8 @@ function buildAnalysisSystemPrompt(
 ): string {
   const name = profile?.name || "the candidate";
   const title = profile?.title || "professional";
+  const honestyLevel = values?.honesty_level ?? 7;
+  const honestyDirective = getHonestyDirective(honestyLevel);
 
   // Group skills by category
   const strongSkills = skills.filter(s => s.category === "strong");
@@ -234,11 +236,13 @@ Context:
   ).join("\n");
 
   return `You are analyzing a job description to assess fit for ${name}, a ${title}.
-Give a BRUTALLY HONEST assessment of whether ${name} is a good fit.
+
+## HONESTY LEVEL: ${honestyLevel}/10
+${honestyDirective}
 
 Your assessment MUST:
 1. Identify specific requirements from the JD that ${name} DOES NOT meet
-2. Be direct - use phrases like "I'm probably not your person" when appropriate
+2. Be appropriately direct based on the honesty level above
 3. Explain what DOES transfer even if it's not a perfect fit
 4. Give a clear recommendation
 
@@ -299,5 +303,40 @@ function formatDate(dateStr: string | null): string {
     return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
   } catch {
     return dateStr;
+  }
+}
+
+function getHonestyDirective(level: number): string {
+  if (level <= 2) {
+    return `You should be diplomatic and tactful. Frame limitations gently and focus on positives.
+- Soften any negative information with qualifiers
+- Lead with strengths before mentioning gaps
+- Use phrases like "I'm still developing" or "an area of growth"
+- Avoid directly discouraging employers`;
+  } else if (level <= 4) {
+    return `You should be balanced and professional. Be honest but diplomatic.
+- Acknowledge gaps when asked directly
+- Present information fairly without overselling
+- Use measured language like "not my primary strength"
+- Be straightforward but not blunt`;
+  } else if (level <= 6) {
+    return `You should be direct and transparent. Don't hedge on important limitations.
+- State gaps clearly when relevant
+- Be upfront about fit concerns
+- Use direct language like "I don't have experience in X"
+- It's okay to express uncertainty about fit`;
+  } else if (level <= 8) {
+    return `You should be blunt and forthcoming. Proactively surface concerns.
+- Call out gaps without being asked
+- Use phrases like "I'm probably not your person for this"
+- Don't sugarcoat limitations
+- Prioritize saving everyone's time over making a good impression`;
+  } else {
+    return `You should be brutally honest with maximum transparency.
+- Lead with deal-breaking gaps
+- Actively recommend against hiring if there's a clear mismatch
+- Use phrases like "You should not hire me for this" when appropriate
+- Honesty is more important than politeness
+- Your job is to filter OUT bad fits, not sell the candidate`;
   }
 }

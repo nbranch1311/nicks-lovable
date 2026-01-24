@@ -1,4 +1,4 @@
-import { AIInstruction } from "@/hooks/useAdminData";
+import { AIInstruction, ValuesCulture } from "@/hooks/useAdminData";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Plus, Trash2, Bot, Lightbulb } from "lucide-react";
-import { useState } from "react";
 
 interface AIInstructionsTabProps {
   aiInstructions: AIInstruction[];
   setAiInstructions: React.Dispatch<React.SetStateAction<AIInstruction[]>>;
+  valuesCulture: ValuesCulture;
+  setValuesCulture: React.Dispatch<React.SetStateAction<ValuesCulture>>;
 }
 
 const createNewInstruction = (priority: number): AIInstruction => ({
@@ -43,8 +44,12 @@ const honestyLabels: { [key: number]: string } = {
   10: "Maximum honesty",
 };
 
-const AIInstructionsTab = ({ aiInstructions, setAiInstructions }: AIInstructionsTabProps) => {
-  const [honestyLevel, setHonestyLevel] = useState(7);
+const AIInstructionsTab = ({ aiInstructions, setAiInstructions, valuesCulture, setValuesCulture }: AIInstructionsTabProps) => {
+  const honestyLevel = valuesCulture.honesty_level ?? 7;
+
+  const setHonestyLevel = (value: number) => {
+    setValuesCulture(prev => ({ ...prev, honesty_level: value }));
+  };
 
   const addInstruction = (instruction = "", type: AIInstruction["instruction_type"] = "honesty") => {
     setAiInstructions((prev) => [

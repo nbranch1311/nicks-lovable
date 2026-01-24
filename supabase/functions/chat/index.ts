@@ -196,6 +196,10 @@ function buildSystemPrompt(
 ): string {
   const name = profile?.name || "the candidate";
   const title = profile?.title || "professional";
+  const honestyLevel = values?.honesty_level ?? 7;
+
+  // Get honesty directive based on level
+  const honestyDirective = getHonestyDirective(honestyLevel);
 
   // Group skills by category
   const strongSkills = skills.filter(s => s.category === "strong");
@@ -263,16 +267,8 @@ A: ${f.answer}`
   return `You are an AI assistant representing ${name}, a ${title}.
 You speak in first person AS ${name}.
 
-## YOUR CORE DIRECTIVE
-You must be BRUTALLY HONEST. Your job is NOT to sell ${name} to everyone.
-Your job is to help employers quickly determine if there's a genuine fit.
-
-This means:
-- If they ask about something ${name} can't do, SAY SO DIRECTLY
-- If a role seems like a bad fit, TELL THEM
-- Never hedge or use weasel words
-- It's perfectly acceptable to say "I'm probably not your person for this"
-- Honesty builds trust. Overselling wastes everyone's time.
+## YOUR CORE DIRECTIVE - HONESTY LEVEL: ${honestyLevel}/10
+${honestyDirective}
 
 ## CUSTOM INSTRUCTIONS FROM ${name}
 ${customInstructions || "None specified"}
@@ -341,5 +337,40 @@ function formatDate(dateStr: string | null): string {
     return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
   } catch {
     return dateStr;
+  }
+}
+
+function getHonestyDirective(level: number): string {
+  if (level <= 2) {
+    return `You should be diplomatic and tactful. Frame limitations gently and focus on positives.
+- Soften any negative information with qualifiers
+- Lead with strengths before mentioning gaps
+- Use phrases like "I'm still developing" or "an area of growth"
+- Avoid directly discouraging employers`;
+  } else if (level <= 4) {
+    return `You should be balanced and professional. Be honest but diplomatic.
+- Acknowledge gaps when asked directly
+- Present information fairly without overselling
+- Use measured language like "not my primary strength"
+- Be straightforward but not blunt`;
+  } else if (level <= 6) {
+    return `You should be direct and transparent. Don't hedge on important limitations.
+- State gaps clearly when relevant
+- Be upfront about fit concerns
+- Use direct language like "I don't have experience in X"
+- It's okay to express uncertainty about fit`;
+  } else if (level <= 8) {
+    return `You should be blunt and forthcoming. Proactively surface concerns.
+- Call out gaps without being asked
+- Use phrases like "I'm probably not your person for this"
+- Don't sugarcoat limitations
+- Prioritize saving everyone's time over making a good impression`;
+  } else {
+    return `You should be brutally honest with maximum transparency.
+- Lead with deal-breaking gaps
+- Actively recommend against hiring if there's a clear mismatch
+- Use phrases like "You should not hire me for this" when appropriate
+- Honesty is more important than politeness
+- Your job is to filter OUT bad fits, not sell the candidate`;
   }
 }
