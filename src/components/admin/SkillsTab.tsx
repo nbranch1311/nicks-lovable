@@ -140,9 +140,11 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 items-start">
                   <div className="space-y-2">
-                    <Label>Years of Experience</Label>
+                    <div className="flex items-center h-5">
+                      <Label>Years of Experience</Label>
+                    </div>
                     <Input
                       type="number"
                       value={skill.years_experience || ""}
@@ -153,7 +155,7 @@ const SkillsTab = ({ skills, setSkills }: SkillsTabProps) => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between h-5">
                       <Label>Last Used</Label>
                       <div className="flex items-center gap-2">
                         <Checkbox
