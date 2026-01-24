@@ -21,9 +21,10 @@ interface AIChatDrawerProps {
 }
 
 const suggestedQuestions = [
+  "What's your greatest strength?",
   "What's your biggest weakness?",
-  "Tell me about a project that failed",
-  "Why did you leave The Washington Post?",
+  "Tell me about a project that you are most proud of.",
+  "What motivates you?",
   "What would your last manager say about you?",
 ];
 
