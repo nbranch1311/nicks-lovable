@@ -7,7 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Item, ItemActions, ItemContent, ItemGroup } from "@/components/ui/item";
-import { Plus, Trash2, ChevronDown, ChevronUp, X } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, X, ArrowUpToLine, ArrowDownToLine } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { MonthYearPicker } from "@/components/admin/MonthYearPicker";
@@ -42,7 +48,15 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [newBullet, setNewBullet] = useState<{ [key: number]: string }>({});
 
-  const addExperience = () => {
+  const addExperienceToTop = () => {
+    setExperiences((prev) => {
+      const updated = [createNewExperience(0), ...prev];
+      return updated.map((exp, i) => ({ ...exp, display_order: i }));
+    });
+    setExpandedIndex(0);
+  };
+
+  const addExperienceToBottom = () => {
     setExperiences((prev) => [...prev, createNewExperience(prev.length)]);
     setExpandedIndex(experiences.length);
   };
@@ -95,17 +109,31 @@ const ExperienceTab = ({ experiences, setExperiences }: ExperienceTabProps) => {
             Add your work history with detailed AI context for honest representation
           </p>
         </div>
-        <Button onClick={addExperience}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Experience
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Experience
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={addExperienceToTop}>
+              <ArrowUpToLine className="w-4 h-4 mr-2" />
+              Add to Top (Most Recent)
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={addExperienceToBottom}>
+              <ArrowDownToLine className="w-4 h-4 mr-2" />
+              Add to Bottom (Oldest)
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {experiences.length === 0 ? (
         <Card className="glass border-border/50 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground mb-4">No experiences added yet</p>
-            <Button onClick={addExperience}>
+            <Button onClick={addExperienceToTop}>
               <Plus className="w-4 h-4 mr-2" />
               Add Your First Experience
             </Button>
