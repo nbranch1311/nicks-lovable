@@ -2,24 +2,19 @@ import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { usePublicProfile } from "@/hooks/usePublicData";
+import { usePublicProfile, usePublicExperiences } from "@/hooks/usePublicData";
 import ScrollDownCaret from "@/components/ScrollDownCaret";
 
 interface HeroSectionProps {
   onOpenChat: () => void;
 }
 
-// Fallback data when no database profile exists
-const fallbackCompanies = [
-  "Google",
-  "Meta",
-  "Stripe",
-  "Airbnb",
-  "Startup Co.",
-];
-
 const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
-  const { data: profile, isLoading } = usePublicProfile();
+  const { data: profile, isLoading: profileLoading } = usePublicProfile();
+  const { data: experiences, isLoading: experiencesLoading } = usePublicExperiences();
+
+  // Extract unique company names from experiences
+  const companies = experiences?.map(exp => exp.company_name).filter(Boolean) || [];
 
   // Use database data if available, otherwise fallback to defaults
   const name = profile?.name || "Nick Branch";
@@ -29,6 +24,7 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
   const targetTitles = profile?.target_titles?.length ? profile.target_titles : ["Staff Engineer"];
   const targetCompanyStages = profile?.target_company_stages?.length ? profile.target_company_stages : [];
   const availabilityStatus = profile?.availability_status || "Open to opportunities";
+  const isLoading = profileLoading || experiencesLoading;
 
   // Format availability badge text
   const getAvailabilityText = () => {
@@ -103,23 +99,25 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
           {elevatorPitch}
         </motion.p>
 
-        {/* Company Badges - Use fallback companies for now */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-3 mb-10"
-        >
-          {fallbackCompanies.map((company) => (
-            <Badge
-              key={company}
-              variant="outline"
-              className="px-4 py-2 rounded-full glass text-sm text-muted-foreground hover:text-foreground transition-colors border-transparent bg-transparent font-normal"
-            >
-              {company}
-            </Badge>
-          ))}
-        </motion.div>
+        {/* Company Badges */}
+        {companies.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-wrap justify-center gap-3 mb-10"
+          >
+            {companies.map((company) => (
+              <Badge
+                key={company}
+                variant="outline"
+                className="px-4 py-2 rounded-full glass text-sm text-muted-foreground hover:text-foreground transition-colors border-transparent bg-transparent font-normal"
+              >
+                {company}
+              </Badge>
+            ))}
+          </motion.div>
+        )}
 
         {/* CTA Button */}
         <motion.div
