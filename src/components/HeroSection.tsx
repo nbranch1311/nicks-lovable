@@ -11,27 +11,35 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
   const { data: profile, isLoading: profileLoading } = usePublicProfile();
-  const { data: experiences, isLoading: experiencesLoading } = usePublicExperiences();
+  const { data: experiences, isLoading: experiencesLoading } =
+    usePublicExperiences();
 
   // Extract unique company names from experiences
-  const companies = experiences?.map(exp => exp.company_name).filter(Boolean) || [];
+  const companies =
+    experiences?.map((exp) => exp.company_name).filter(Boolean) || [];
 
   // Use database data if available, otherwise fallback to defaults
   const name = profile?.name || "Nick Branch";
   const title = profile?.title || "Principal Software Engineer";
-  const elevatorPitch = profile?.elevator_pitch || 
-    "I build high-performance systems that scale. 12 years shipping products used by millions, from early-stage chaos to public company stability.";
-  const targetTitles = profile?.target_titles?.length ? profile.target_titles : ["Staff Engineer"];
-  const targetCompanyStages = profile?.target_company_stages?.length ? profile.target_company_stages : [];
-  const availabilityStatus = profile?.availability_status || "Open to opportunities";
+  const elevatorPitch =
+    profile?.elevator_pitch ||
+    "My passion begins and ends with the user experience. Applications should feel as enjoyable to use as they are easy to use";
+  const targetTitles = profile?.target_titles?.length
+    ? profile.target_titles
+    : ["Staff Engineer"];
+  const targetCompanyStages = profile?.target_company_stages?.length
+    ? profile.target_company_stages
+    : [];
+  const availabilityStatus =
+    profile?.availability_status || "Open to opportunities";
   const isLoading = profileLoading || experiencesLoading;
 
   // Format availability badge text
   const getAvailabilityText = () => {
     const statusMap: Record<string, string> = {
-      'actively_looking': 'Actively looking',
-      'open': 'Open to opportunities',
-      'not_looking': 'Not currently looking',
+      actively_looking: "Actively looking",
+      open: "Open to opportunities",
+      not_looking: "Not currently looking",
     };
     return statusMap[availabilityStatus] || availabilityStatus;
   };
@@ -61,9 +69,17 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse-slow" />
             <span className="text-muted-foreground">
               {getAvailabilityText()} for{" "}
-              <span className="text-foreground font-medium">{targetTitles.join(", ")}</span>
+              <span className="text-foreground font-medium">
+                {targetTitles.join(", ")}
+              </span>
               {targetCompanyStages.length > 0 && (
-                <> at <span className="text-foreground font-medium">{targetCompanyStages.join(", ")}</span></>
+                <>
+                  {" "}
+                  at{" "}
+                  <span className="text-foreground font-medium">
+                    {targetCompanyStages.join(", ")}
+                  </span>
+                </>
               )}
             </span>
           </Badge>
@@ -141,7 +157,10 @@ const HeroSection = ({ onOpenChat }: HeroSectionProps) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
       >
-        <ScrollDownCaret nextSectionId="experience" ariaLabel="Scroll to Experience" />
+        <ScrollDownCaret
+          nextSectionId="experience"
+          ariaLabel="Scroll to Experience"
+        />
       </motion.div>
     </section>
   );
