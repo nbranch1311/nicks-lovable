@@ -25,6 +25,7 @@ export interface Profile {
   github_url: string | null;
   twitter_url: string | null;
   resume_url: string | null;
+  education: string | null;
 }
 
 export interface Experience {
@@ -122,6 +123,7 @@ const defaultProfile: Profile = {
   github_url: null,
   twitter_url: null,
   resume_url: null,
+  education: null,
 };
 
 const defaultValuesCulture: ValuesCulture = {

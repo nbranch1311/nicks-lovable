@@ -328,6 +328,28 @@ const ProfileTab = ({ profile, setProfile }: ProfileTabProps) => {
 
       <Card className="glass border-border/50">
         <CardHeader>
+          <CardTitle>Education</CardTitle>
+          <CardDescription>Your degrees, certifications, and educational background</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="education">Education Summary</Label>
+            <Textarea
+              id="education"
+              value={profile.education || ""}
+              onChange={(e) => updateProfile("education", e.target.value)}
+              placeholder="e.g., B.S. Computer Science, Stanford University (2015)&#10;MBA, Harvard Business School (2020)&#10;AWS Solutions Architect Certification"
+              rows={5}
+            />
+            <p className="text-xs text-muted-foreground">
+              List your degrees, schools, graduation years, and any relevant certifications. One per line works well.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="glass border-border/50">
+        <CardHeader>
           <CardTitle>Social Links</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
