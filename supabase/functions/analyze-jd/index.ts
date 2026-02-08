@@ -264,6 +264,9 @@ ${profile?.career_narrative || ""}
 What I'm looking for: ${profile?.looking_for || "Not specified"}
 What I'm NOT looking for: ${profile?.not_looking_for || "Not specified"}
 
+## EDUCATION
+${profile?.education || "No formal education listed."}
+
 ## WORK EXPERIENCE
 ${experiencesSection || "No experiences listed."}
 
