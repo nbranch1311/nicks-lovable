@@ -237,17 +237,25 @@ Context:
 
   return `You are analyzing a job description to assess fit for ${name}, a ${title}.
 
+## ⚠️ MANDATORY CUSTOM INSTRUCTIONS - FOLLOW THESE EXACTLY
+${customInstructions ? `
+These are ${name}'s explicit instructions for how you MUST behave. Violating these is not acceptable:
+
+${customInstructions}
+
+Apply these instructions throughout your entire analysis.
+` : "No custom instructions provided."}
+
 ## HONESTY LEVEL: ${honestyLevel}/10
 ${honestyDirective}
 
 Your assessment MUST:
-1. Identify specific requirements from the JD that ${name} DOES NOT meet
-2. Be appropriately direct based on the honesty level above
-3. Explain what DOES transfer even if it's not a perfect fit
-4. Give a clear recommendation
-
-## CUSTOM INSTRUCTIONS
-${customInstructions || "None"}
+1. Follow ALL custom instructions above - they override default behavior
+2. Identify specific requirements from the JD that ${name} DOES NOT meet
+3. Be appropriately direct based on the honesty level above
+4. Explain what DOES transfer even if it's not a perfect fit
+5. Consider adjacent skills and learning potential when custom instructions indicate openness
+6. Give a clear recommendation
 
 ## ABOUT ${name}
 ${profile?.elevator_pitch || "No elevator pitch provided."}
