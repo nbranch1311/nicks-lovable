@@ -68,12 +68,6 @@ const Footer = () => {
             )}
           </div>
 
-          {/* Tagline */}
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Built with AI-queryable context. Excited for future prospects. Because resumes are static and often times boring, 
-            but careers can be exciting and alwaysworth exploring. I am not a rapper.
-          </p>
-
           <div className="mt-8 pt-8">
             <Separator className="mb-8 bg-border/30" />
             <p className="text-xs text-muted-foreground">

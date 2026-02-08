@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Search, AlertTriangle, CheckCircle, MessageSquare } from "lucide-react";
+import {
+  Search,
+  AlertTriangle,
+  CheckCircle,
+  MessageSquare,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
@@ -56,13 +61,13 @@ const JDAnalyzer = () => {
 
   const handleAnalyze = async () => {
     if (!jobDescription.trim()) return;
-    
+
     setIsAnalyzing(true);
     setAnalysis(null);
-    
+
     try {
       const { data, error } = await supabase.functions.invoke("analyze-jd", {
-        body: { jobDescription }
+        body: { jobDescription },
       });
 
       if (error) {
@@ -144,7 +149,8 @@ const JDAnalyzer = () => {
             Honest Fit Assessment
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Paste a job description. Get an honest assessment of whether I'm the right person—including when I'm not.
+            Paste a job description. Get an honest assessment of whether I'm the
+            right person—including when I'm not.
           </p>
         </motion.div>
 
@@ -217,7 +223,7 @@ const JDAnalyzer = () => {
                 <div className="flex items-center gap-3">
                   <span
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${getVerdictStyles(
-                      analysis.verdict
+                      analysis.verdict,
                     )}`}
                   >
                     {getVerdictIcon(analysis.verdict)}
@@ -246,11 +252,20 @@ const JDAnalyzer = () => {
                     {analysis.gaps.map((gap, index) => (
                       <li key={index} className="text-muted-foreground">
                         <div className="flex items-start gap-2">
-                          <span className="text-secondary mt-0.5 shrink-0">✗</span>
+                          <span className="text-secondary mt-0.5 shrink-0">
+                            ✗
+                          </span>
                           <div>
-                            <span className="font-medium text-foreground">{gap.gap_title}</span>
-                            <span className="text-muted-foreground"> — {gap.requirement}</span>
-                            <p className="text-sm mt-1 text-muted-foreground/80">{gap.explanation}</p>
+                            <span className="font-medium text-foreground">
+                              {gap.gap_title}
+                            </span>
+                            <span className="text-muted-foreground">
+                              {" "}
+                              — {gap.requirement}
+                            </span>
+                            <p className="text-sm mt-1 text-muted-foreground/80">
+                              {gap.explanation}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -277,7 +292,9 @@ const JDAnalyzer = () => {
                 <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">
                   My Recommendation
                 </h3>
-                <p className="text-muted-foreground">{analysis.recommendation}</p>
+                <p className="text-muted-foreground">
+                  {analysis.recommendation}
+                </p>
               </div>
             </motion.div>
           )}
@@ -292,8 +309,9 @@ const JDAnalyzer = () => {
           className="mt-8 p-6 rounded-xl bg-muted/30 border border-border/50"
         >
           <p className="text-sm text-muted-foreground italic text-center">
-            "This signals something completely different than 'please consider my resume.' 
-            You're qualifying them. Your time is valuable too."
+            "I want to give companies a valuable experience, not just 'please
+            consider my resume.' Your time is valuable, so get real answers,
+            built on real data, in real time, about me. - Nicholas Branch."
           </p>
         </motion.div>
       </div>
